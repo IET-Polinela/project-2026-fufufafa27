@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Daftar Laporan</title>
+</head>
+<body>
+
+<h1>Daftar Laporan Kota</h1>
+
+<a href="/add/">+ Tambah Laporan</a>
+
+<hr>
+
+{% for report in reports %}
+    <div>
+        <h3>{{ report.title }}</h3>
+        <p><b>Kategori:</b> {{ report.category }}</p>
+        <p><b>Deskripsi:</b> {{ report.description }}</p>
+        <p><b>Lokasi:</b> {{ report.location }}</p>
+        <p><b>Status:</b> {{ report.status }}</p>
+        <p><b>Dibuat:</b> {{ report.created_at }}</p>
+
+        <a href="/update/{{ report.id }}">Edit</a> |
+        <a href="/delete/{{ report.id }}">Hapus</a>
+    </div>
+
+    <hr>
+{% empty %}
+    <p>Belum ada laporan.</p>
+{% endfor %}
+
+</body>
+</html>
