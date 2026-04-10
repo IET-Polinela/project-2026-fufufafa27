@@ -1,33 +1,100 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Daftar Laporan</title>
+    <title>Smart City Report</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
-<body>
 
-<h1>Daftar Laporan Kota</h1>
+<body style="background: linear-gradient(to right, #e3f2fd, #ffffff);">
 
-<a href="/add/">+ Tambah Laporan</a>
+<!-- 🔥 NAVBAR -->
+<nav class="navbar navbar-dark bg-dark">
+    <div class="container">
+        <span class="navbar-brand">🏙 Smart City</span>
+        <a href="{% url 'report_list' %}" class="btn btn-light">Home</a>
+    </div>
+</nav>
 
-<hr>
+<!-- 🔥 HERO -->
+<div class="text-white text-center p-5"
+     style="background: url('https://images.unsplash.com/photo-1508057198894-247b23fe5ade') center/cover;">
 
-{% for report in reports %}
-    <div>
-        <h3>{{ report.title }}</h3>
-        <p><b>Kategori:</b> {{ report.category }}</p>
-        <p><b>Deskripsi:</b> {{ report.description }}</p>
-        <p><b>Lokasi:</b> {{ report.location }}</p>
-        <p><b>Status:</b> {{ report.status }}</p>
-        <p><b>Dibuat:</b> {{ report.created_at }}</p>
+    <h1 class="fw-bold">Smart City Report</h1>
+    <p>Laporkan masalah kota dengan mudah dan cepat</p>
 
-        <a href="/update/{{ report.id }}">Edit</a> |
-        <a href="/delete/{{ report.id }}">Hapus</a>
+    <a href="{% url 'report_create' %}" class="btn btn-warning mt-3">
+        + Tambah Laporan
+    </a>
+</div>
+
+<!-- 🔥 CONTENT -->
+<div class="container mt-4">
+
+    {% for report in reports %}
+    <div class="card mb-3 shadow-sm">
+        <div class="card-body">
+
+            <!-- GAMBAR -->
+            <img src="https://source.unsplash.com/600x200/?city,street"
+                 class="img-fluid rounded mb-3">
+
+            <h4>{{ report.title }}</h4>
+
+            <p><b>Kategori:</b> {{ report.category }}</p>
+            <p><b>Deskripsi:</b> {{ report.description }}</p>
+            <p><b>Lokasi:</b> {{ report.location }}</p>
+
+            <!-- STATUS -->
+            {% if report.status == 'REPORTED' %}
+                <span class="badge bg-secondary">📢 Reported</span>
+
+            {% elif report.status == 'VERIFIED' %}
+                <span class="badge bg-info">✔ Verified</span>
+
+            {% elif report.status == 'IN_PROGRESS' %}
+                <span class="badge bg-warning text-dark">⏳ In Progress</span>
+
+            {% else %}
+                <span class="badge bg-success">✅ Resolved</span>
+            {% endif %}
+
+            <hr>
+
+            <!-- WORKFLOW -->
+            <form method="post" action="{% url 'update_status' report.id %}">
+                {% csrf_token %}
+
+                {% if report.status == 'REPORTED' %}
+                    <button class="btn btn-warning btn-sm" name="status" value="VERIFIED">Verifikasi</button>
+
+                {% elif report.status == 'VERIFIED' %}
+                    <button class="btn btn-primary btn-sm" name="status" value="IN_PROGRESS">Proses</button>
+
+                {% elif report.status == 'IN_PROGRESS' %}
+                    <button class="btn btn-success btn-sm" name="status" value="RESOLVED">Selesaikan</button>
+
+                {% endif %}
+            </form>
+
+            <hr>
+
+            <!-- BUTTON -->
+            <a href="{% url 'report_detail' report.id %}" class="btn btn-info btn-sm">Detail</a>
+            <a href="{% url 'report_update' report.id %}" class="btn btn-secondary btn-sm">Edit</a>
+            <a href="{% url 'report_delete' report.id %}" class="btn btn-danger btn-sm">Hapus</a>
+
+        </div>
     </div>
 
-    <hr>
-{% empty %}
-    <p>Belum ada laporan.</p>
-{% endfor %}
+    {% empty %}
+        <div class="alert alert-warning text-center">
+            Belum ada laporan
+        </div>
+    {% endfor %}
+
+</div>
 
 </body>
 </html>
