@@ -1,3 +1,6 @@
+{% extends 'base.html' %}
+{% block content %}
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -6,21 +9,55 @@
 </head>
 <body class="bg-light">
 
+<!-- 🔥 BREADCRUMB (ASLI) -->
+<nav class="container mt-3">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="/">Home</a></li>
+    <li class="breadcrumb-item active">Form</li>
+  </ol>
+</nav>
+
+<!-- 🔥 TAMBAHAN BREADCRUMB -->
+<nav class="container mt-2">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="/">🏠 Home</a></li>
+    <li class="breadcrumb-item"><a href="{% url 'report_list' %}">Reports</a></li>
+    <li class="breadcrumb-item active">Form</li>
+  </ol>
+</nav>
+
 <div class="container mt-5">
     <div class="card shadow p-4">
 
         <h2 class="mb-3">📝 Form Laporan</h2>
 
-        <form method="post">
+        <form method="post" id="form">
             {% csrf_token %}
             {{ form.as_p }}
 
-            <button type="submit" class="btn btn-success">Simpan</button>
+            <button type="submit" class="btn btn-success" id="btnSubmit">Simpan</button>
             <a href="{% url 'report_list' %}" class="btn btn-secondary">Kembali</a>
         </form>
 
     </div>
 </div>
 
+<script>
+document.getElementById("form").addEventListener("submit", function(e){
+    e.preventDefault();
+
+    let btn = document.getElementById("btnSubmit");
+
+    btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Loading...';
+    btn.disabled = true;
+
+    setTimeout(() => {
+        e.target.submit();
+    }, 2000);
+});
+</script>
+
 </body>
 </html>
+
+{% endblock %}

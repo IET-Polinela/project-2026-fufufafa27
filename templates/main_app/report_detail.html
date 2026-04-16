@@ -1,3 +1,15 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<!-- 🔥 BREADCRUMB -->
+<nav class="container mt-3">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="/">🏠 Home</a></li>
+    <li class="breadcrumb-item"><a href="{% url 'report_list' %}">Reports</a></li>
+    <li class="breadcrumb-item active">Detail</li>
+  </ol>
+</nav>
+
 <div class="container mt-4">
     <div class="card p-4 shadow">
         <h2>{{ report.title }}</h2>
@@ -10,3 +22,5 @@
         <a href="{% url 'report_list' %}" class="btn btn-secondary">Kembali</a>
     </div>
 </div>
+
+{% endblock %}

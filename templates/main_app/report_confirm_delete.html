@@ -1,23 +1,52 @@
+{% extends 'base.html' %}
+{% block content %}
+
 <!DOCTYPE html>
 <html>
 <head>
     <title>Hapus Laporan</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
 
-<h1>Konfirmasi Hapus</h1>
+<!-- 🔥 BREADCRUMB (ASLI) -->
+<nav class="container mt-3">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="/">Home</a></li>
+    <li class="breadcrumb-item active">Hapus</li>
+  </ol>
+</nav>
 
-<p>Apakah kamu yakin ingin menghapus laporan ini?</p>
+<!-- 🔥 TAMBAHAN BREADCRUMB -->
+<nav class="container mt-2">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="/">🏠 Home</a></li>
+    <li class="breadcrumb-item"><a href="{% url 'report_list' %}">Reports</a></li>
+    <li class="breadcrumb-item active">Hapus</li>
+  </ol>
+</nav>
 
-<p><b>{{ object.title }}</b></p>
+<div class="container mt-5">
+    <div class="card shadow p-4 text-center">
 
-<form method="post">
-    {% csrf_token %}
-    <button type="submit">Ya, Hapus</button>
-</form>
+        <h1 class="text-danger">⚠️ Konfirmasi Hapus</h1>
 
-<br>
-<a href="{% url 'report_list' %}">Batal</a>
+        <p>Apakah kamu yakin ingin menghapus laporan ini?</p>
+
+        <p><b>{{ object.title }}</b></p>
+
+        <form method="post" onsubmit="return confirm('Data akan dihapus permanen, lanjutkan?')">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">Ya, Hapus</button>
+        </form>
+
+        <br>
+        <a href="{% url 'report_list' %}" class="btn btn-secondary">Batal</a>
+
+    </div>
+</div>
 
 </body>
 </html>
+
+{% endblock %}

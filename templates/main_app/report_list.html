@@ -1,3 +1,6 @@
+{% extends 'base.html' %}
+{% block content %}
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -8,6 +11,21 @@
 </head>
 
 <body style="background: linear-gradient(to right, #e3f2fd, #ffffff);">
+
+<!-- 🔥 BREADCRUMB (ASLI) -->
+<nav class="container mt-3">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item active">Home</li>
+  </ol>
+</nav>
+
+<!-- 🔥 TAMBAHAN BREADCRUMB -->
+<nav class="container mt-2">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="/">🏠 Home</a></li>
+    <li class="breadcrumb-item active">Reports</li>
+  </ol>
+</nav>
 
 <!-- 🔥 NAVBAR -->
 <nav class="navbar navbar-dark bg-dark">
@@ -36,7 +54,6 @@
     <div class="card mb-3 shadow-sm">
         <div class="card-body">
 
-            <!-- GAMBAR -->
             <img src="https://source.unsplash.com/600x200/?city,street"
                  class="img-fluid rounded mb-3">
 
@@ -46,41 +63,33 @@
             <p><b>Deskripsi:</b> {{ report.description }}</p>
             <p><b>Lokasi:</b> {{ report.location }}</p>
 
-            <!-- STATUS -->
             {% if report.status == 'REPORTED' %}
                 <span class="badge bg-secondary">📢 Reported</span>
-
             {% elif report.status == 'VERIFIED' %}
                 <span class="badge bg-info">✔ Verified</span>
-
             {% elif report.status == 'IN_PROGRESS' %}
                 <span class="badge bg-warning text-dark">⏳ In Progress</span>
-
             {% else %}
                 <span class="badge bg-success">✅ Resolved</span>
             {% endif %}
 
             <hr>
 
-            <!-- WORKFLOW -->
-            <form method="post" action="{% url 'update_status' report.id %}">
+            <form method="post" action="{% url 'update_status' report.id %}"
+                  onsubmit="return confirm('Yakin ubah status?')">
                 {% csrf_token %}
 
                 {% if report.status == 'REPORTED' %}
                     <button class="btn btn-warning btn-sm" name="status" value="VERIFIED">Verifikasi</button>
-
                 {% elif report.status == 'VERIFIED' %}
                     <button class="btn btn-primary btn-sm" name="status" value="IN_PROGRESS">Proses</button>
-
                 {% elif report.status == 'IN_PROGRESS' %}
                     <button class="btn btn-success btn-sm" name="status" value="RESOLVED">Selesaikan</button>
-
                 {% endif %}
             </form>
 
             <hr>
 
-            <!-- BUTTON -->
             <a href="{% url 'report_detail' report.id %}" class="btn btn-info btn-sm">Detail</a>
             <a href="{% url 'report_update' report.id %}" class="btn btn-secondary btn-sm">Edit</a>
             <a href="{% url 'report_delete' report.id %}" class="btn btn-danger btn-sm">Hapus</a>
@@ -90,7 +99,10 @@
 
     {% empty %}
         <div class="alert alert-warning text-center">
-            Belum ada laporan
+            <h5>Belum ada laporan</h5>
+            <a href="{% url 'report_create' %}" class="btn btn-primary mt-2">
+                Tambah Laporan
+            </a>
         </div>
     {% endfor %}
 
@@ -98,3 +110,5 @@
 
 </body>
 </html>
+
+{% endblock %}
