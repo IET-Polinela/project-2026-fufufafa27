@@ -2,8 +2,21 @@ from django.views.generic import ListView, DetailView, CreateView, UpdateView, D
 from django.views import View
 from django.urls import reverse_lazy
 from django.shortcuts import get_object_or_404, redirect
-from django.contrib import messages   # 🔥 TAMBAHAN
+from django.contrib import messages
 from .models import Report
+
+
+# ✅ TAMBAHAN LAB 6 - Mixin proteksi Admin
+class AdminRequiredMixin:
+    """Hanya Admin yang boleh akses. Dicek di dispatch() sebelum view dieksekusi."""
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            messages.error(request, "Kamu harus login terlebih dahulu.")
+            return redirect('login')
+        if not request.user.is_admin:
+            messages.error(request, "Akses Ditolak. Fitur ini hanya untuk Admin.")
+            return redirect('report_list')
+        return super().dispatch(request, *args, **kwargs)
 
 
 # ======================
@@ -27,13 +40,12 @@ class ReportDetailView(DetailView):
 # ======================
 # CREATE
 # ======================
-class ReportCreateView(CreateView):
+class ReportCreateView(AdminRequiredMixin, CreateView):  # ✅ TAMBAHAN LAB 6
     model = Report
     fields = ['title', 'category', 'description', 'location']
     template_name = 'main_app/report_form.html'
     success_url = reverse_lazy('report_list')
 
-    # 🔥 TAMBAHAN
     def form_valid(self, form):
         messages.success(self.request, "Laporan berhasil ditambahkan")
         return super().form_valid(form)
@@ -42,13 +54,12 @@ class ReportCreateView(CreateView):
 # ======================
 # UPDATE
 # ======================
-class ReportUpdateView(UpdateView):
+class ReportUpdateView(AdminRequiredMixin, UpdateView):  # ✅ TAMBAHAN LAB 6
     model = Report
     fields = ['title', 'category', 'description', 'location']
     template_name = 'main_app/report_form.html'
     success_url = reverse_lazy('report_list')
 
-    # 🔥 TAMBAHAN
     def form_valid(self, form):
         messages.success(self.request, "Laporan berhasil diperbarui")
         return super().form_valid(form)
@@ -57,13 +68,12 @@ class ReportUpdateView(UpdateView):
 # ======================
 # DELETE
 # ======================
-class ReportDeleteView(DeleteView):
+class ReportDeleteView(AdminRequiredMixin, DeleteView):  # ✅ TAMBAHAN LAB 6
     model = Report
     template_name = 'main_app/report_confirm_delete.html'
     success_url = reverse_lazy('report_list')
     context_object_name = 'report'
 
-    # 🔥 TAMBAHAN
     def delete(self, request, *args, **kwargs):
         messages.success(self.request, "Laporan berhasil dihapus")
         return super().delete(request, *args, **kwargs)
@@ -72,7 +82,7 @@ class ReportDeleteView(DeleteView):
 # ======================
 # WORKFLOW STATUS
 # ======================
-class ReportUpdateStatusView(View):
+class ReportUpdateStatusView(AdminRequiredMixin, View):  # ✅ TAMBAHAN LAB 6
     def post(self, request, pk):
         report = get_object_or_404(Report, pk=pk)
 
@@ -83,7 +93,6 @@ class ReportUpdateStatusView(View):
             report.status = new_status
             report.save()
 
-            # 🔥 TAMBAHAN
             messages.success(request, "Status berhasil diperbarui")
 
         return redirect('report_list')

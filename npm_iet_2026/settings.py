@@ -20,7 +20,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-e)@w3y#2141a1ro9c88wf0ms09mew4e88ha_x^8ppd+niq%_^-' 
+SECRET_KEY = 'django-insecure-e)@w3y#2141a1ro9c88wf0ms09mew4e88ha_x^8ppd+niq%_^-'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'main_app',
+    'usermanagement_24782005',  # ✅ TAMBAHAN LAB 6
 ]
 
 MIDDLEWARE = [
@@ -120,3 +121,10 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = 'static/'
+
+# ✅ TAMBAHAN LAB 6 - Custom User Model & Auth Redirects
+AUTH_USER_MODEL = 'usermanagement_24782005.User'
+
+LOGIN_URL = '/auth/login/'
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/auth/login/'
