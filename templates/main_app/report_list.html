@@ -1,114 +1,467 @@
 {% extends 'base.html' %}
+
+{% block title %}Reports - Smart City{% endblock %}
+
 {% block content %}
 
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Smart City Report</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap');
 
-    <!-- Bootstrap -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
+:root {
+  --city-blue: #1a3a6b;
+  --city-accent: #f5a623;
+  --text-primary: #0d1b2a;
+  --text-muted: #5a6a7a;
+}
 
-<body style="background: linear-gradient(to right, #e3f2fd, #ffffff);">
+/* ── HERO ── */
+.rl-hero {
+  position: relative;
+  min-height: 320px;
+  border-radius: 20px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 2rem;
+}
+.rl-hero-bg {
+  position: absolute; inset: 0;
+  background: url('https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=1400&auto=format&fit=crop') center/cover no-repeat;
+  transform: scale(1.04);
+  transition: transform 8s ease;
+}
+.rl-hero:hover .rl-hero-bg { transform: scale(1.0); }
+.rl-hero-overlay {
+  position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(10,15,30,0.82) 0%, rgba(26,58,107,0.65) 60%, rgba(0,198,255,0.15) 100%);
+}
+.rl-hero-content {
+  position: relative; z-index: 2;
+  text-align: center; color: #fff;
+  padding: 2.5rem 2rem;
+}
+.rl-hero-tag {
+  display: inline-block;
+  background: rgba(245,166,35,0.18);
+  border: 1px solid rgba(245,166,35,0.5);
+  color: var(--city-accent);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.7rem; font-weight: 500;
+  letter-spacing: 0.18em; text-transform: uppercase;
+  padding: 0.3rem 0.9rem; border-radius: 100px;
+  margin-bottom: 1rem;
+}
+.rl-hero-title {
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(1.8rem, 4vw, 2.8rem);
+  font-weight: 800; line-height: 1.1;
+  letter-spacing: -0.02em; margin-bottom: 0.6rem;
+}
+.rl-hero-title span {
+  background: linear-gradient(90deg, #f5a623, #ffdb70);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.rl-hero-sub {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.95rem; font-weight: 300;
+  color: rgba(255,255,255,0.75); margin-bottom: 1.5rem;
+}
+.rl-btn-add {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.88rem; font-weight: 500;
+  padding: 0.65rem 1.7rem; border-radius: 100px;
+  border: none; background: linear-gradient(135deg, #f5a623, #f7c560);
+  color: #1a1a1a; text-decoration: none;
+  display: inline-block; transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 4px 20px rgba(245,166,35,0.35);
+}
+.rl-btn-add:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 28px rgba(245,166,35,0.5);
+  color: #1a1a1a;
+}
 
-<!-- 🔥 BREADCRUMB (ASLI) -->
-<nav class="container mt-3">
-  <ol class="breadcrumb">
-    <li class="breadcrumb-item active">Home</li>
-  </ol>
-</nav>
+/* ── SEARCH ── */
+.rl-search-card {
+  background: #fff;
+  border: 1px solid #e8eef6;
+  border-radius: 16px;
+  padding: 1.4rem 1.5rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+}
+.rl-search-label {
+  font-family: 'Syne', sans-serif;
+  font-size: 0.9rem; font-weight: 700;
+  color: var(--text-primary); margin-bottom: 0.8rem;
+  display: flex; align-items: center; gap: 0.4rem;
+}
+.rl-search-input {
+  width: 100%;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.92rem;
+  border: 1.5px solid #dde5f0;
+  border-radius: 100px;
+  padding: 0.65rem 1.3rem;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  color: var(--text-primary);
+}
+.rl-search-input:focus {
+  border-color: var(--city-blue);
+  box-shadow: 0 0 0 3px rgba(26,58,107,0.1);
+}
+#search-results { margin-top: 0.8rem; }
 
-<!-- 🔥 TAMBAHAN BREADCRUMB -->
-<nav class="container mt-2">
-  <ol class="breadcrumb">
-    <li class="breadcrumb-item"><a href="/">🏠 Home</a></li>
+/* ── SECTION TITLE ── */
+.rl-section-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 1.2rem; font-weight: 700;
+  color: var(--text-primary); margin-bottom: 1.2rem;
+  display: flex; align-items: center; gap: 0.6rem;
+}
+.rl-section-title::after {
+  content: ''; flex: 1; height: 1px;
+  background: linear-gradient(90deg, #e2e8f0, transparent);
+}
+
+/* ── REPORT CARDS ── */
+.rl-card {
+  background: #fff;
+  border: 1px solid #e8eef6;
+  border-radius: 18px;
+  overflow: hidden;
+  margin-bottom: 1.2rem;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.04);
+  transition: box-shadow 0.25s, transform 0.25s, border-color 0.25s;
+}
+.rl-card:hover {
+  box-shadow: 0 10px 36px rgba(0,0,0,0.1);
+  transform: translateY(-3px);
+  border-color: #c7d9f5;
+}
+
+.rl-card-img {
+  width: 100%; height: 180px;
+  object-fit: cover; display: block;
+  background: #e8eef6;
+}
+
+.rl-card-body { padding: 1.4rem 1.6rem; }
+
+.rl-card-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 1.15rem; font-weight: 700;
+  color: var(--text-primary); margin-bottom: 0.5rem;
+}
+.rl-card-meta {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.82rem; color: var(--text-muted);
+  margin-bottom: 0.9rem;
+  display: flex; flex-wrap: wrap; gap: 1rem;
+}
+.rl-card-meta span { display: flex; align-items: center; gap: 0.3rem; }
+
+.rl-card-desc {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.88rem; color: #3a4a5a;
+  line-height: 1.6; margin-bottom: 1rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Status badges */
+.rl-badge {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.7rem; font-weight: 500;
+  letter-spacing: 0.06em; text-transform: uppercase;
+  padding: 0.3rem 0.8rem; border-radius: 100px;
+  display: inline-block; margin-bottom: 1rem;
+}
+.rl-badge-reported  { background: #fef3c7; color: #92400e; }
+.rl-badge-verified  { background: #dbeafe; color: #1e40af; }
+.rl-badge-progress  { background: #e0f2fe; color: #0369a1; }
+.rl-badge-resolved  { background: #d1fae5; color: #065f46; }
+
+/* Card divider */
+.rl-card-divider {
+  height: 1px; background: #f0f4f9;
+  margin: 0.8rem 0;
+}
+
+/* Action area */
+.rl-card-actions {
+  display: flex; align-items: center;
+  gap: 0.6rem; flex-wrap: wrap;
+}
+
+.rl-workflow-form { display: inline; }
+
+.rl-btn-sm {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.78rem; font-weight: 500;
+  padding: 0.38rem 1rem; border-radius: 100px;
+  text-decoration: none; display: inline-block;
+  border: 1.5px solid transparent;
+  transition: all 0.18s; cursor: pointer;
+}
+.rl-btn-detail  { background: #f0f5ff; color: #1a3a6b; border-color: #c7d9f5; }
+.rl-btn-detail:hover  { background: #1a3a6b; color: #fff; }
+.rl-btn-edit    { background: #f5f5f5; color: #444; border-color: #ddd; }
+.rl-btn-edit:hover    { background: #444; color: #fff; }
+.rl-btn-delete  { background: #fff0f0; color: #c0392b; border-color: #fcc; }
+.rl-btn-delete:hover  { background: #c0392b; color: #fff; }
+.rl-btn-verify  { background: #fef3c7; color: #92400e; border-color: #fde68a; }
+.rl-btn-verify:hover  { background: #f59e0b; color: #fff; border-color: #f59e0b; }
+.rl-btn-process { background: #dbeafe; color: #1e40af; border-color: #bfdbfe; }
+.rl-btn-process:hover { background: #1e40af; color: #fff; }
+.rl-btn-resolve { background: #d1fae5; color: #065f46; border-color: #a7f3d0; }
+.rl-btn-resolve:hover { background: #10b981; color: #fff; border-color: #10b981; }
+
+/* Empty state */
+.rl-empty {
+  text-align: center; padding: 4rem 2rem;
+  background: #fff; border-radius: 18px;
+  border: 1.5px dashed #dde5f0;
+}
+.rl-empty-icon {
+  font-size: 2.5rem; margin-bottom: 0.8rem;
+}
+.rl-empty-text {
+  font-family: 'Syne', sans-serif;
+  font-size: 1.1rem; font-weight: 600;
+  color: var(--text-primary); margin-bottom: 0.4rem;
+}
+.rl-empty-sub {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.88rem; color: var(--text-muted);
+  margin-bottom: 1.2rem;
+}
+
+/* Search results list */
+.rl-search-list-item {
+  display: flex; justify-content: space-between;
+  align-items: center; gap: 1rem;
+  padding: 0.9rem 1rem;
+  border: 1px solid #e8eef6; border-radius: 12px;
+  margin-bottom: 0.5rem;
+  background: #fff; transition: border-color 0.15s;
+}
+.rl-search-list-item:hover { border-color: #c7d9f5; }
+
+@media (max-width: 768px) {
+  .rl-hero { min-height: 260px; }
+  .rl-card-actions { gap: 0.4rem; }
+}
+</style>
+
+<!-- Breadcrumb -->
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb" style="font-family:'DM Sans',sans-serif; font-size:0.82rem;">
+    <li class="breadcrumb-item"><a href="/" style="color:var(--city-blue);">🏠 Home</a></li>
     <li class="breadcrumb-item active">Reports</li>
   </ol>
 </nav>
 
-<!-- 🔥 NAVBAR -->
-<nav class="navbar navbar-dark bg-dark">
-    <div class="container">
-        <span class="navbar-brand">🏙 Smart City</span>
-        <a href="{% url 'report_list' %}" class="btn btn-light">Home</a>
-    </div>
-</nav>
-
-<!-- 🔥 HERO -->
-<div class="text-white text-center p-5"
-     style="background: url('https://images.unsplash.com/photo-1508057198894-247b23fe5ade') center/cover;">
-
-    <h1 class="fw-bold">Smart City Report</h1>
-    <p>Laporkan masalah kota dengan mudah dan cepat</p>
-
-    <a href="{% url 'report_create' %}" class="btn btn-warning mt-3">
-        + Tambah Laporan
-    </a>
+<!-- HERO -->
+<div class="rl-hero">
+  <div class="rl-hero-bg"></div>
+  <div class="rl-hero-overlay"></div>
+  <div class="rl-hero-content">
+    <div class="rl-hero-tag">📋 Daftar Laporan</div>
+    <h1 class="rl-hero-title">Smart City <span>Report</span></h1>
+    <p class="rl-hero-sub">Pantau dan kelola laporan masalah kota secara real-time</p>
+    {% if user.is_authenticated and user.is_admin %}
+      <a href="{% url 'report_create' %}" class="rl-btn-add">+ Tambah Laporan</a>
+    {% endif %}
+  </div>
 </div>
 
-<!-- 🔥 CONTENT -->
-<div class="container mt-4">
-
-    {% for report in reports %}
-    <div class="card mb-3 shadow-sm">
-        <div class="card-body">
-
-            <img src="https://source.unsplash.com/600x200/?city,street"
-                 class="img-fluid rounded mb-3">
-
-            <h4>{{ report.title }}</h4>
-
-            <p><b>Kategori:</b> {{ report.category }}</p>
-            <p><b>Deskripsi:</b> {{ report.description }}</p>
-            <p><b>Lokasi:</b> {{ report.location }}</p>
-
-            {% if report.status == 'REPORTED' %}
-                <span class="badge bg-secondary">📢 Reported</span>
-            {% elif report.status == 'VERIFIED' %}
-                <span class="badge bg-info">✔ Verified</span>
-            {% elif report.status == 'IN_PROGRESS' %}
-                <span class="badge bg-warning text-dark">⏳ In Progress</span>
-            {% else %}
-                <span class="badge bg-success">✅ Resolved</span>
-            {% endif %}
-
-            <hr>
-
-            <form method="post" action="{% url 'update_status' report.id %}"
-                  onsubmit="return confirm('Yakin ubah status?')">
-                {% csrf_token %}
-
-                {% if report.status == 'REPORTED' %}
-                    <button class="btn btn-warning btn-sm" name="status" value="VERIFIED">Verifikasi</button>
-                {% elif report.status == 'VERIFIED' %}
-                    <button class="btn btn-primary btn-sm" name="status" value="IN_PROGRESS">Proses</button>
-                {% elif report.status == 'IN_PROGRESS' %}
-                    <button class="btn btn-success btn-sm" name="status" value="RESOLVED">Selesaikan</button>
-                {% endif %}
-            </form>
-
-            <hr>
-
-            <a href="{% url 'report_detail' report.id %}" class="btn btn-info btn-sm">Detail</a>
-            <a href="{% url 'report_update' report.id %}" class="btn btn-secondary btn-sm">Edit</a>
-            <a href="{% url 'report_delete' report.id %}" class="btn btn-danger btn-sm">Hapus</a>
-
-        </div>
-    </div>
-
-    {% empty %}
-        <div class="alert alert-warning text-center">
-            <h5>Belum ada laporan</h5>
-            <a href="{% url 'report_create' %}" class="btn btn-primary mt-2">
-                Tambah Laporan
-            </a>
-        </div>
-    {% endfor %}
-
+<!-- LIVE SEARCH -->
+<div class="rl-search-card">
+  <div class="rl-search-label">🔍 Live Search Laporan</div>
+  <input type="text" id="search-input" class="rl-search-input"
+         placeholder="Ketik judul laporan...">
+  <div id="search-results">
+    <p style="font-family:'DM Sans',sans-serif; font-size:0.82rem; color:#8a9ab0; text-align:center; margin:0.5rem 0 0;">
+      Ketik untuk mencari laporan...
+    </p>
+  </div>
 </div>
 
-</body>
-</html>
+<!-- SECTION TITLE -->
+<div class="rl-section-title">📌 Semua Laporan</div>
 
+<!-- REPORT CARDS -->
+{% for report in reports %}
+<div class="rl-card">
+  <img src="https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3"
+       class="rl-card-img" alt="city">
+  <div class="rl-card-body">
+
+    <h4 class="rl-card-title">{{ report.title }}</h4>
+
+    <div class="rl-card-meta">
+      <span>🏷 {{ report.category }}</span>
+      <span>📍 {{ report.location }}</span>
+    </div>
+
+    <p class="rl-card-desc">{{ report.description }}</p>
+
+    {% if report.status == 'REPORTED' %}
+      <span class="rl-badge rl-badge-reported">📢 Reported</span>
+    {% elif report.status == 'VERIFIED' %}
+      <span class="rl-badge rl-badge-verified">✔ Verified</span>
+    {% elif report.status == 'IN_PROGRESS' %}
+      <span class="rl-badge rl-badge-progress">⏳ In Progress</span>
+    {% else %}
+      <span class="rl-badge rl-badge-resolved">✅ Resolved</span>
+    {% endif %}
+
+    {% if user.is_authenticated and user.is_admin %}
+    <div class="rl-card-divider"></div>
+    <form class="rl-workflow-form" method="post" action="{% url 'update_status' report.id %}"
+          onsubmit="return confirm('Yakin ubah status?')">
+      {% csrf_token %}
+      {% if report.status == 'REPORTED' %}
+        <button class="rl-btn-sm rl-btn-verify" name="status" value="VERIFIED">✔ Verifikasi</button>
+      {% elif report.status == 'VERIFIED' %}
+        <button class="rl-btn-sm rl-btn-process" name="status" value="IN_PROGRESS">⏳ Proses</button>
+      {% elif report.status == 'IN_PROGRESS' %}
+        <button class="rl-btn-sm rl-btn-resolve" name="status" value="RESOLVED">✅ Selesaikan</button>
+      {% endif %}
+    </form>
+    {% endif %}
+
+    <div class="rl-card-divider"></div>
+    <div class="rl-card-actions">
+      <a href="{% url 'report_detail' report.id %}" class="rl-btn-sm rl-btn-detail">Detail →</a>
+      {% if user.is_authenticated and user.is_admin %}
+        <a href="{% url 'report_update' report.id %}" class="rl-btn-sm rl-btn-edit">✏ Edit</a>
+        <a href="{% url 'report_delete' report.id %}" class="rl-btn-sm rl-btn-delete">🗑 Hapus</a>
+      {% endif %}
+    </div>
+
+  </div>
+</div>
+
+{% empty %}
+<div class="rl-empty">
+  <div class="rl-empty-icon">📭</div>
+  <div class="rl-empty-text">Belum ada laporan</div>
+  <div class="rl-empty-sub">Jadilah yang pertama melaporkan masalah di kotamu!</div>
+  {% if user.is_authenticated and user.is_admin %}
+    <a href="{% url 'report_create' %}" class="rl-btn-add">+ Tambah Laporan</a>
+  {% endif %}
+</div>
+{% endfor %}
+
+<!-- MODAL DETAIL -->
+<div class="modal fade" id="detailModal" tabindex="-1">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content" style="border-radius:18px; border:none; box-shadow:0 20px 60px rgba(0,0,0,0.15);">
+      <div class="modal-header" style="border-bottom:1px solid #f0f4f9; padding:1.2rem 1.5rem;">
+        <h5 class="modal-title" id="modal-title"
+            style="font-family:'Syne',sans-serif; font-weight:700; color:#0d1b2a;">Detail Laporan</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body" style="padding:1.5rem;">
+        <table class="table" style="font-family:'DM Sans',sans-serif; font-size:0.88rem;">
+          <tr><th style="width:28%; color:#5a6a7a; font-weight:500;">ID</th><td id="modal-id"></td></tr>
+          <tr><th style="color:#5a6a7a; font-weight:500;">Judul</th><td id="modal-judul"></td></tr>
+          <tr><th style="color:#5a6a7a; font-weight:500;">Kategori</th><td id="modal-kategori"></td></tr>
+          <tr><th style="color:#5a6a7a; font-weight:500;">Deskripsi</th><td id="modal-deskripsi"></td></tr>
+          <tr><th style="color:#5a6a7a; font-weight:500;">Lokasi</th><td id="modal-lokasi"></td></tr>
+          <tr><th style="color:#5a6a7a; font-weight:500;">Status</th><td id="modal-status"></td></tr>
+          <tr><th style="color:#5a6a7a; font-weight:500;">Tanggal</th><td id="modal-tanggal"></td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+    const searchInput   = document.getElementById('search-input');
+    const searchResults = document.getElementById('search-results');
+    let debounceTimer;
+
+    function getStatusBadge(status) {
+        const map = {
+            'REPORTED':    ['rl-badge-reported',  '📢 Reported'],
+            'VERIFIED':    ['rl-badge-verified',   '✔ Verified'],
+            'IN_PROGRESS': ['rl-badge-progress',   '⏳ In Progress'],
+            'RESOLVED':    ['rl-badge-resolved',   '✅ Resolved'],
+        };
+        const [cls, label] = map[status] || ['', status];
+        return `<span class="rl-badge ${cls}">${label}</span>`;
+    }
+
+    function renderSearchResults(reports) {
+        if (reports.length === 0) {
+            searchResults.innerHTML = '<p style="font-family:\'DM Sans\',sans-serif;font-size:0.82rem;color:#8a9ab0;text-align:center;margin:0.5rem 0 0;">Tidak ada hasil ditemukan.</p>';
+            return;
+        }
+        let html = '';
+        reports.forEach(r => {
+            html += `<div class="rl-search-list-item">
+                <div>
+                  <div style="font-family:'Syne',sans-serif;font-size:0.92rem;font-weight:600;color:#0d1b2a;">${r.title}</div>
+                  <div style="font-family:'DM Sans',sans-serif;font-size:0.76rem;color:#8a9ab0;">${r.category} · 📍 ${r.location}</div>
+                </div>
+                <div style="display:flex;align-items:center;gap:0.6rem;">
+                  ${getStatusBadge(r.status)}
+                  <button class="rl-btn-sm rl-btn-detail btn-detail" data-id="${r.id}">Detail →</button>
+                </div>
+            </div>`;
+        });
+        searchResults.innerHTML = html;
+    }
+
+    searchInput.addEventListener('input', function () {
+        clearTimeout(debounceTimer);
+        const query = this.value.trim();
+        debounceTimer = setTimeout(() => {
+            fetch(`/api/search/?q=${encodeURIComponent(query)}`)
+                .then(res => res.json())
+                .then(data => renderSearchResults(data.reports));
+        }, 400);
+    });
+
+    document.addEventListener('click', function (e) {
+        if (e.target.classList.contains('btn-detail')) {
+            const reportId = e.target.getAttribute('data-id');
+            fetch(`/api/report/${reportId}/`)
+                .then(res => res.json())
+                .then(data => {
+                    const map = {
+                        'REPORTED':    ['rl-badge-reported',  '📢 Reported'],
+                        'VERIFIED':    ['rl-badge-verified',   '✔ Verified'],
+                        'IN_PROGRESS': ['rl-badge-progress',   '⏳ In Progress'],
+                        'RESOLVED':    ['rl-badge-resolved',   '✅ Resolved'],
+                    };
+                    const [cls, label] = map[data.status] || ['', data.status];
+                    document.getElementById('modal-title').textContent     = data.title;
+                    document.getElementById('modal-id').textContent        = data.id;
+                    document.getElementById('modal-judul').textContent     = data.title;
+                    document.getElementById('modal-kategori').textContent  = data.category;
+                    document.getElementById('modal-deskripsi').textContent = data.description;
+                    document.getElementById('modal-lokasi').textContent    = data.location;
+                    document.getElementById('modal-status').innerHTML      = `<span class="rl-badge ${cls}">${label}</span>`;
+                    document.getElementById('modal-tanggal').textContent   = data.created_at;
+                    new bootstrap.Modal(document.getElementById('detailModal')).show();
+                });
+        }
+    });
+});
+</script>
 {% endblock %}

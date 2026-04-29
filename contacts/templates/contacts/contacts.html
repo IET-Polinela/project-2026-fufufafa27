@@ -1,0 +1,137 @@
+{% extends 'base.html' %}
+
+{% block title %}Contact — Smart City Lampung{% endblock %}
+
+{% block content %}
+
+<!-- HERO -->
+<div class="text-white text-center p-5 rounded mb-4"
+     style="background: linear-gradient(135deg, #198754, #20c997);">
+    <h1 class="fw-bold">📬 Hubungi Kami</h1>
+    <p class="lead mb-0">Ada pertanyaan atau saran? Jangan ragu untuk menghubungi kami</p>
+</div>
+
+<div class="row g-4">
+
+    <!-- INFO KONTAK -->
+    <div class="col-md-5">
+        <div class="card shadow-sm h-100">
+            <div class="card-header fw-bold">📋 Informasi Kontak</div>
+            <div class="card-body">
+                <ul class="list-unstyled">
+                    <li class="mb-3 d-flex align-items-center gap-3">
+                        <span class="fs-4">👤</span>
+                        <div>
+                            <div class="fw-semibold">Nama</div>
+                            <div class="text-muted">Arfal Malik Gibran</div>
+                        </div>
+                    </li>
+                    <li class="mb-3 d-flex align-items-center gap-3">
+                        <span class="fs-4">📱</span>
+                        <div>
+                            <div class="fw-semibold">No. HP / WhatsApp</div>
+                            <div class="text-muted">0813779316898</div>
+                        </div>
+                    </li>
+                    <li class="mb-3 d-flex align-items-center gap-3">
+                        <span class="fs-4">📧</span>
+                        <div>
+                            <div class="fw-semibold">Email</div>
+                            <div class="text-muted">arfal@gmail.com</div>
+                        </div>
+                    </li>
+                    <li class="mb-3 d-flex align-items-center gap-3">
+                        <span class="fs-4">📍</span>
+                        <div>
+                            <div class="fw-semibold">Alamat</div>
+                            <div class="text-muted">Bandar Lampung</div>
+                        </div>
+                    </li>
+                    <li class="mb-3 d-flex align-items-center gap-3">
+                        <span class="fs-4">🏫</span>
+                        <div>
+                            <div class="fw-semibold">Institusi</div>
+                            <div class="text-muted">Politeknik Negeri Lampung</div>
+                        </div>
+                    </li>
+                </ul>
+
+                <div class="d-flex gap-2 mt-3">
+                    <a href="https://wa.me/6281377931689"
+                       target="_blank" class="btn btn-success btn-sm">
+                        💬 WhatsApp
+                    </a>
+                    <a href="mailto:arfal@gmail.com"
+                       class="btn btn-primary btn-sm">
+                        📧 Kirim Email
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FORM PESAN -->
+    <div class="col-md-7">
+        <div class="card shadow-sm h-100">
+            <div class="card-header fw-bold">✉ Kirim Pesan</div>
+            <div class="card-body">
+                <div id="form-alert" class="alert alert-success d-none">
+                    ✅ Pesan berhasil dikirim! Kami akan segera menghubungi Anda.
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Nama Lengkap</label>
+                    <input type="text" id="input-nama" class="form-control" placeholder="Masukkan nama lengkap">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Email</label>
+                    <input type="email" id="input-email" class="form-control" placeholder="Masukkan email">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Subjek</label>
+                    <input type="text" id="input-subjek" class="form-control" placeholder="Subjek pesan">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Pesan</label>
+                    <textarea id="input-pesan" class="form-control" rows="4"
+                              placeholder="Tulis pesan Anda di sini..."></textarea>
+                </div>
+                <button class="btn btn-success w-100" onclick="kirimPesan()">
+                    📤 Kirim Pesan
+                </button>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function kirimPesan() {
+    const nama   = document.getElementById('input-nama').value.trim();
+    const email  = document.getElementById('input-email').value.trim();
+    const subjek = document.getElementById('input-subjek').value.trim();
+    const pesan  = document.getElementById('input-pesan').value.trim();
+
+    if (!nama || !email || !subjek || !pesan) {
+        alert('Harap isi semua field terlebih dahulu!');
+        return;
+    }
+
+    // Tampilkan alert sukses
+    document.getElementById('form-alert').classList.remove('d-none');
+
+    // Reset form
+    document.getElementById('input-nama').value   = '';
+    document.getElementById('input-email').value  = '';
+    document.getElementById('input-subjek').value = '';
+    document.getElementById('input-pesan').value  = '';
+
+    // Sembunyikan alert setelah 4 detik
+    setTimeout(() => {
+        document.getElementById('form-alert').classList.add('d-none');
+    }, 4000);
+}
+</script>
+{% endblock %}

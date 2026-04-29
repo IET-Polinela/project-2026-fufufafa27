@@ -1,0 +1,181 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard — Smart City{% endblock %}
+
+{% block content %}
+
+<h4 class="mb-4 fw-bold">📊 Dashboard Smart City</h4>
+
+<!-- STAT CARDS -->
+<div class="row g-3 mb-4" id="stat-cards">
+  <div class="col-6 col-md-3">
+    <div class="card text-white bg-secondary h-100">
+      <div class="card-body text-center">
+        <div class="fs-2 fw-bold" id="count-reported">-</div>
+        <div class="small">Reported</div>
+      </div>
+    </div>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="card text-white bg-primary h-100">
+      <div class="card-body text-center">
+        <div class="fs-2 fw-bold" id="count-verified">-</div>
+        <div class="small">Verified</div>
+      </div>
+    </div>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="card text-white bg-warning h-100">
+      <div class="card-body text-center">
+        <div class="fs-2 fw-bold" id="count-inprogress">-</div>
+        <div class="small">In Progress</div>
+      </div>
+    </div>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="card text-white bg-success h-100">
+      <div class="card-body text-center">
+        <div class="fs-2 fw-bold" id="count-resolved">-</div>
+        <div class="small">Resolved</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CHARTS -->
+<div class="row g-4 mb-4">
+  <div class="col-md-5">
+    <div class="card shadow-sm h-100">
+      <div class="card-header fw-semibold">🍩 Distribusi Status Laporan</div>
+      <div class="card-body d-flex justify-content-center align-items-center">
+        <canvas id="statusChart" style="max-height: 280px;"></canvas>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-7">
+    <div class="card shadow-sm h-100">
+      <div class="card-header fw-semibold">📊 Distribusi Kategori Laporan</div>
+      <div class="card-body">
+        <canvas id="categoryChart" style="max-height: 280px;"></canvas>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TABEL LAPORAN -->
+<div class="row g-4 mb-4">
+  <div class="col-md-6">
+    <div class="card shadow-sm">
+      <div class="card-header fw-semibold">🆕 5 Laporan Terbaru (Reported)</div>
+      <div class="card-body p-0">
+        <table class="table table-sm table-hover mb-0">
+          <thead class="table-light">
+            <tr><th>Judul</th><th>Kategori</th><th>Tanggal</th></tr>
+          </thead>
+          <tbody id="table-reported"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="card shadow-sm">
+      <div class="card-header fw-semibold">✅ 5 Laporan Selesai (Resolved)</div>
+      <div class="card-body p-0">
+        <table class="table table-sm table-hover mb-0">
+          <thead class="table-light">
+            <tr><th>Judul</th><th>Kategori</th><th>Tanggal</th></tr>
+          </thead>
+          <tbody id="table-resolved"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+  fetch("{% url 'dashboard_stats' %}")
+    .then(res => res.json())
+    .then(data => {
+      console.log('[Fetch API] Data diterima dari server:', data);
+
+      // --- STAT CARDS ---
+      const statusMap = {};
+      data.status.forEach(s => statusMap[s.status] = s.count);
+
+      document.getElementById('count-reported').textContent   = statusMap['REPORTED']    || 0;
+      document.getElementById('count-verified').textContent   = statusMap['VERIFIED']    || 0;
+      document.getElementById('count-inprogress').textContent = statusMap['IN_PROGRESS'] || 0;
+      document.getElementById('count-resolved').textContent   = statusMap['RESOLVED']    || 0;
+
+      // --- DOUGHNUT CHART (Status) ---
+      const statusLabels = data.status.map(s => s.status);
+      const statusCounts = data.status.map(s => s.count);
+      new Chart(document.getElementById('statusChart'), {
+        type: 'doughnut',
+        data: {
+          labels: statusLabels,
+          datasets: [{
+            data: statusCounts,
+            backgroundColor: ['#6c757d', '#0d6efd', '#ffc107', '#198754'],
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: { legend: { position: 'bottom' } }
+        }
+      });
+
+      // --- BAR CHART (Kategori) ---
+      const catLabels = data.category.map(c => c.category);
+      const catCounts = data.category.map(c => c.count);
+      new Chart(document.getElementById('categoryChart'), {
+        type: 'bar',
+        data: {
+          labels: catLabels,
+          datasets: [{
+            label: 'Jumlah Laporan',
+            data: catCounts,
+            backgroundColor: ['#0d6efd','#198754','#ffc107','#dc3545','#6f42c1'],
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: { legend: { display: false } },
+          scales: { y: { beginAtZero: true } }
+        }
+      });
+
+      // --- TABEL REPORTED ---
+      const tbReported = document.getElementById('table-reported');
+      data.latest_reported.forEach(r => {
+        tbReported.innerHTML += `
+          <tr>
+            <td>${r.title}</td>
+            <td>${r.category}</td>
+            <td>${r.created_at}</td>
+          </tr>`;
+      });
+
+      // --- TABEL RESOLVED ---
+      const tbResolved = document.getElementById('table-resolved');
+      data.latest_resolved.forEach(r => {
+        tbResolved.innerHTML += `
+          <tr>
+            <td>${r.title}</td>
+            <td>${r.category}</td>
+            <td>${r.created_at}</td>
+          </tr>`;
+      });
+    });
+
+});
+</script>
+{% endblock %}

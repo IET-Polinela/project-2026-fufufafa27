@@ -39,6 +39,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'main_app',
     'usermanagement_24782005',  # ✅ TAMBAHAN LAB 6
+    'dashboard_24782005',       # ✅ TAMBAHAN LAB 7
+    'about',                    # ✅ TAMBAHAN
+    'contacts',                 # ✅ TAMBAHAN
 ]
 
 MIDDLEWARE = [

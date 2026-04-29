@@ -1,30 +1,136 @@
-{% extends 'main_app/base.html' %}
+{% extends 'base.html' %}
+
+{% block title %}About — Smart City Lampung{% endblock %}
+
 {% block content %}
 
-<div class="container mt-4">
-    <div class="card shadow p-4">
+<!-- HERO -->
+<div class="text-white text-center p-5 rounded mb-4"
+     style="background: linear-gradient(135deg, #0d6efd, #0dcaf0);">
+    <h1 class="fw-bold">🏙 Smart City Lampung</h1>
+    <p class="lead mb-0">Platform pelaporan masalah kota yang transparan dan terstruktur</p>
+</div>
 
-        <h2 class="mb-3">ℹ️ About</h2>
+<!-- TENTANG APLIKASI -->
+<div class="row g-4 mb-4">
+    <div class="col-md-6">
+        <div class="card shadow-sm h-100">
+            <div class="card-body">
+                <h5 class="card-title fw-bold">📌 Tentang Aplikasi</h5>
+                <p class="card-text">
+                    Smart City Lampung adalah aplikasi berbasis web yang dirancang untuk membantu
+                    warga melaporkan berbagai permasalahan di lingkungan kota, seperti jalan rusak,
+                    lampu jalan mati, sampah menumpuk, banjir lokal, atau fasilitas umum bermasalah.
+                </p>
+                <p class="card-text">
+                    Setiap laporan akan ditindaklanjuti oleh pihak pengelola kota secara terstruktur
+                    dan transparan sehingga warga dapat memantau perkembangan penanganan masalah
+                    secara real-time.
+                </p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card shadow-sm h-100">
+            <div class="card-body">
+                <h5 class="card-title fw-bold">🎯 Tujuan</h5>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item">✅ Mempermudah warga melaporkan masalah kota</li>
+                    <li class="list-group-item">✅ Meningkatkan transparansi penanganan laporan</li>
+                    <li class="list-group-item">✅ Mempercepat respons pemerintah daerah</li>
+                    <li class="list-group-item">✅ Mendokumentasikan permasalahan kota secara terstruktur</li>
+                    <li class="list-group-item">✅ Membangun komunikasi antara warga dan pemerintah</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
 
-        <p>
-            Aplikasi <b>Smart City Report</b> adalah sistem berbasis web yang digunakan
-            untuk membantu masyarakat dalam melaporkan berbagai permasalahan yang terjadi di kota.
-        </p>
+<!-- KATEGORI LAPORAN -->
+<div class="card shadow-sm mb-4">
+    <div class="card-header fw-bold">📋 Kategori Laporan yang Didukung</div>
+    <div class="card-body">
+        <div class="row g-3 text-center">
+            <div class="col-6 col-md-4 col-lg-2">
+                <div class="p-3 bg-light rounded">
+                    <div class="fs-2">🛣</div>
+                    <div class="small fw-semibold">Jalan Rusak</div>
+                </div>
+            </div>
+            <div class="col-6 col-md-4 col-lg-2">
+                <div class="p-3 bg-light rounded">
+                    <div class="fs-2">🗑</div>
+                    <div class="small fw-semibold">Sampah</div>
+                </div>
+            </div>
+            <div class="col-6 col-md-4 col-lg-2">
+                <div class="p-3 bg-light rounded">
+                    <div class="fs-2">💡</div>
+                    <div class="small fw-semibold">Lampu Mati</div>
+                </div>
+            </div>
+            <div class="col-6 col-md-4 col-lg-2">
+                <div class="p-3 bg-light rounded">
+                    <div class="fs-2">🌊</div>
+                    <div class="small fw-semibold">Drainase</div>
+                </div>
+            </div>
+            <div class="col-6 col-md-4 col-lg-2">
+                <div class="p-3 bg-light rounded">
+                    <div class="fs-2">🔒</div>
+                    <div class="small fw-semibold">Keamanan</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
-        <p>
-            Melalui aplikasi ini, pengguna dapat:
-        </p>
+<!-- ALUR STATUS -->
+<div class="card shadow-sm mb-4">
+    <div class="card-header fw-bold">🔄 Alur Penanganan Laporan</div>
+    <div class="card-body">
+        <div class="d-flex flex-wrap justify-content-center align-items-center gap-2 text-center">
+            <div class="p-3 bg-secondary text-white rounded">
+                <div class="fw-bold">📢 REPORTED</div>
+                <small>Laporan masuk</small>
+            </div>
+            <div class="fs-4">→</div>
+            <div class="p-3 bg-primary text-white rounded">
+                <div class="fw-bold">✔ VERIFIED</div>
+                <small>Diverifikasi admin</small>
+            </div>
+            <div class="fs-4">→</div>
+            <div class="p-3 bg-warning text-dark rounded">
+                <div class="fw-bold">⏳ IN PROGRESS</div>
+                <small>Sedang ditangani</small>
+            </div>
+            <div class="fs-4">→</div>
+            <div class="p-3 bg-success text-white rounded">
+                <div class="fw-bold">✅ RESOLVED</div>
+                <small>Selesai ditangani</small>
+            </div>
+        </div>
+    </div>
+</div>
 
-        <ul>
-            <li>Menambahkan laporan masalah</li>
-            <li>Melihat daftar laporan</li>
-            <li>Memantau status penanganan</li>
-        </ul>
-
-        <p>
-            Aplikasi ini dibuat sebagai bagian dari praktikum Pemrograman Internet.
-        </p>
-
+<!-- DEVELOPER INFO -->
+<div class="card shadow-sm mb-4">
+    <div class="card-header fw-bold">👨‍💻 Developer</div>
+    <div class="card-body">
+        <div class="row align-items-center">
+            <div class="col-md-2 text-center mb-3 mb-md-0">
+                <div class="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center"
+                     style="width:80px; height:80px; font-size:2rem;">
+                    A
+                </div>
+            </div>
+            <div class="col-md-10">
+                <h5 class="fw-bold mb-1">Arfal Malik Gibran</h5>
+                <p class="text-muted mb-1">NPM: 24782005</p>
+                <p class="text-muted mb-1">Teknologi Rekayasa Internet — Politeknik Negeri Lampung</p>
+                <p class="text-muted mb-0">Mata Kuliah: Pemrograman Internet 1 (PIE 1416)</p>
+            </div>
+        </div>
     </div>
 </div>
 

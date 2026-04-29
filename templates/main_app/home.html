@@ -1,32 +1,551 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Daftar Laporan</title>
-</head>
-<body>
-    <h1>Daftar Laporan Smart City</h1>
+{% extends 'base.html' %}
 
-    <a href="{% url 'add_report' %}">Tambah Laporan</a>
+{% block title %}Home - Smart City{% endblock %}
 
-    <hr>
+{% block content %}
 
-    {% if reports %}
-        {% for report in reports %}
-            <div style="margin-bottom: 20px;">
-                <h3>{{ report.title }}</h3>
-                <p><strong>Kategori:</strong> {{ report.category }}</p>
-                <p><strong>Deskripsi:</strong> {{ report.description }}</p>
-                <p><strong>Lokasi:</strong> {{ report.location }}</p>
-                <p><strong>Status:</strong> {{ report.status }}</p>
-                <p><strong>Dibuat:</strong> {{ report.created_at }}</p>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap');
 
-                <a href="{% url 'edit_report' report.id %}">Edit</a>
-                <a href="{% url 'delete_report' report.id %}">Delete</a>
-            </div>
-            <hr>
-        {% endfor %}
-    {% else %}
-        <p>Belum ada laporan.</p>
+:root {
+  --city-dark: #0a0f1e;
+  --city-blue: #1a3a6b;
+  --city-accent: #f5a623;
+  --city-cyan: #00c6ff;
+  --city-light: #e8f0fe;
+  --text-primary: #0d1b2a;
+  --text-muted: #5a6a7a;
+}
+
+/* ── HERO ANIMASI ── */
+.sc-hero {
+  position: relative;
+  border-radius: 24px;
+  overflow: hidden;
+  background: linear-gradient(135deg, #0d1f3c 0%, #1a3a6b 60%, #0a2a5c 100%);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 2.5rem 3rem;
+  margin-bottom: 0;
+  gap: 2rem;
+  min-height: 320px;
+}
+
+/* bintang-bintang latar */
+.sc-hero::before {
+  content: '';
+  position: absolute; inset: 0;
+  background-image:
+    radial-gradient(circle, rgba(255,255,255,0.6) 1px, transparent 1px),
+    radial-gradient(circle, rgba(255,255,255,0.3) 1px, transparent 1px);
+  background-size: 60px 60px, 30px 30px;
+  background-position: 0 0, 15px 15px;
+  opacity: 0.15;
+}
+
+.sc-hero-content {
+  position: relative;
+  z-index: 2;
+  color: #fff;
+  max-width: 420px;
+}
+
+.sc-hero-tag {
+  display: inline-block;
+  background: rgba(245,166,35,0.18);
+  border: 1px solid rgba(245,166,35,0.5);
+  color: var(--city-accent);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  padding: 0.3rem 0.9rem;
+  border-radius: 100px;
+  margin-bottom: 1rem;
+}
+
+.sc-hero-title {
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(1.6rem, 3vw, 2.4rem);
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  margin-bottom: 0.7rem;
+}
+
+.sc-hero-title span {
+  background: linear-gradient(90deg, #f5a623, #ffdb70);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.sc-hero-sub {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.92rem;
+  font-weight: 300;
+  color: rgba(255,255,255,0.72);
+  margin-bottom: 1.8rem;
+  line-height: 1.6;
+}
+
+/* ilustrasi container */
+.sc-hero-illo {
+  position: relative;
+  z-index: 2;
+  flex-shrink: 0;
+  width: 320px;
+}
+
+/* Animasi karakter */
+@keyframes float-body   { 0%,100%{transform:translateY(0)}  50%{transform:translateY(-6px)} }
+@keyframes wave-arm     { 0%,100%{transform:rotate(0deg)}   50%{transform:rotate(-18deg)} }
+@keyframes blink        { 0%,90%,100%{transform:scaleY(1)}  95%{transform:scaleY(0.1)} }
+@keyframes pop-bubble   { 0%{opacity:0;transform:scale(0.5) translateY(10px)} 20%{opacity:1;transform:scale(1.05) translateY(0)} 80%{opacity:1} 100%{opacity:0;transform:scale(0.95) translateY(-8px)} }
+@keyframes dot-blink    { 0%,80%,100%{opacity:0} 40%{opacity:1} }
+@keyframes road-scroll  { from{stroke-dashoffset:0} to{stroke-dashoffset:-40} }
+@keyframes lamp-glow    { 0%,100%{opacity:0.7} 50%{opacity:1} }
+@keyframes alert-shake  { 0%,100%{transform:rotate(0)} 25%{transform:rotate(-10deg)} 75%{transform:rotate(10deg)} }
+@keyframes pulse-ring   { 0%{r:12;opacity:0.8} 100%{r:22;opacity:0} }
+
+.char-body    { animation: float-body 3s ease-in-out infinite; transform-origin: 160px 200px; }
+.char-arm-r   { animation: wave-arm 1.8s ease-in-out infinite; transform-origin: 178px 158px; }
+.char-eye-l, .char-eye-r { animation: blink 4s ease-in-out infinite; transform-origin: center; }
+.bubble       { animation: pop-bubble 3.5s ease-in-out infinite; transform-origin: 220px 80px; }
+.bubble2      { animation: pop-bubble 3.5s ease-in-out infinite 1.2s; transform-origin: 220px 80px; }
+.dot1 { animation: dot-blink 1.2s ease-in-out infinite 0s; }
+.dot2 { animation: dot-blink 1.2s ease-in-out infinite 0.4s; }
+.dot3 { animation: dot-blink 1.2s ease-in-out infinite 0.8s; }
+.road-line    { animation: road-scroll 1s linear infinite; }
+.lamp-circle  { animation: lamp-glow 2s ease-in-out infinite; }
+.alert-icon   { animation: alert-shake 2s ease-in-out infinite 0.5s; transform-origin: 82px 108px; }
+.pulse-ring   { animation: pulse-ring 1.5s ease-out infinite; }
+
+.sc-btn-primary {
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 500;
+  font-size: 0.92rem;
+  padding: 0.75rem 2rem;
+  border-radius: 100px;
+  border: none;
+  background: linear-gradient(135deg, #f5a623, #f7c560);
+  color: #1a1a1a;
+  text-decoration: none;
+  display: inline-block;
+  margin: 0.25rem;
+  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 4px 20px rgba(245,166,35,0.35);
+}
+.sc-btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 28px rgba(245,166,35,0.5);
+  color: #1a1a1a;
+}
+
+.sc-btn-outline {
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 500;
+  font-size: 0.92rem;
+  padding: 0.75rem 2rem;
+  border-radius: 100px;
+  border: 1.5px solid rgba(255,255,255,0.4);
+  background: rgba(255,255,255,0.08);
+  color: #fff;
+  text-decoration: none;
+  display: inline-block;
+  margin: 0.25rem;
+  transition: all 0.2s;
+  backdrop-filter: blur(6px);
+}
+.sc-btn-outline:hover {
+  background: rgba(255,255,255,0.18);
+  border-color: rgba(255,255,255,0.7);
+  color: #fff;
+  transform: translateY(-2px);
+}
+
+/* Stats strip */
+.sc-stats-strip {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px;
+  background: #e2e8f0;
+  border-radius: 16px;
+  overflow: hidden;
+  margin: 2rem 0;
+  box-shadow: 0 4px 32px rgba(0,0,0,0.07);
+}
+
+.sc-stat-card {
+  background: #fff;
+  padding: 1.8rem 1.2rem;
+  text-align: center;
+  transition: background 0.2s;
+}
+.sc-stat-card:hover { background: #f8faff; }
+
+.sc-stat-number {
+  font-family: 'Syne', sans-serif;
+  font-size: 2.2rem;
+  font-weight: 800;
+  line-height: 1;
+  margin-bottom: 0.35rem;
+  letter-spacing: -0.03em;
+}
+.sc-stat-label {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.78rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+}
+
+.n-total    { color: #0d1b2a; }
+.n-report   { color: #f59e0b; }
+.n-progress { color: #3b82f6; }
+.n-done     { color: #10b981; }
+
+/* Section heading */
+.sc-section-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 1.2rem;
+  letter-spacing: -0.01em;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+.sc-section-title::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, #e2e8f0 0%, transparent 100%);
+}
+
+/* Report cards */
+.sc-report-card {
+  background: #fff;
+  border-radius: 14px;
+  border: 1px solid #e8eef6;
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 0.85rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  transition: box-shadow 0.2s, transform 0.2s, border-color 0.2s;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+}
+.sc-report-card:hover {
+  box-shadow: 0 6px 24px rgba(0,0,0,0.09);
+  transform: translateY(-2px);
+  border-color: #c7d9f5;
+}
+
+.sc-report-left { flex: 1; min-width: 0; }
+
+.sc-report-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 0.97rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 0.2rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.sc-report-meta {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+.sc-report-right {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  flex-shrink: 0;
+}
+
+/* Badges */
+.sc-badge {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 0.32rem 0.8rem;
+  border-radius: 100px;
+}
+.sc-badge-reported  { background: #fef3c7; color: #92400e; }
+.sc-badge-verified  { background: #dbeafe; color: #1e40af; }
+.sc-badge-progress  { background: #e0f2fe; color: #0369a1; }
+.sc-badge-resolved  { background: #d1fae5; color: #065f46; }
+
+.sc-detail-btn {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.78rem;
+  font-weight: 500;
+  padding: 0.38rem 1rem;
+  border-radius: 100px;
+  border: 1.5px solid #c7d9f5;
+  background: transparent;
+  color: #1a3a6b;
+  text-decoration: none;
+  transition: all 0.18s;
+}
+.sc-detail-btn:hover {
+  background: #1a3a6b;
+  color: #fff;
+  border-color: #1a3a6b;
+}
+
+.sc-view-all {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.88rem;
+  font-weight: 500;
+  color: #1a3a6b;
+  text-decoration: none;
+  padding: 1rem;
+  border-radius: 12px;
+  border: 1.5px dashed #c7d9f5;
+  transition: all 0.2s;
+  margin-top: 0.5rem;
+}
+.sc-view-all:hover {
+  background: #f0f5ff;
+  border-color: #1a3a6b;
+}
+
+@media (max-width: 768px) {
+  .sc-stats-strip { grid-template-columns: repeat(2, 1fr); }
+  .sc-hero { min-height: 340px; }
+  .sc-report-card { flex-direction: column; align-items: flex-start; }
+}
+</style>
+
+<!-- Breadcrumb -->
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb" style="font-family:'DM Sans',sans-serif; font-size:0.82rem;">
+    <li class="breadcrumb-item active">🏠 Home</li>
+  </ol>
+</nav>
+
+<!-- HERO ANIMASI -->
+<div class="sc-hero">
+  <!-- Teks kiri -->
+  <div class="sc-hero-content">
+    <div class="sc-hero-tag">🏙 Smart City Platform</div>
+    <h2 class="sc-hero-title">Laporkan<br><span>Masalahmu</span></h2>
+    <p class="sc-hero-sub">
+      Infrastruktur rusak, jalan berlubang, drainase mampet?<br>
+      Laporkan sekarang — cepat, mudah, transparan.
+    </p>
+    <a href="{% url 'report_list' %}" class="sc-btn-primary">📋 Lihat Laporan</a>
+    {% if user.is_authenticated and user.is_admin %}
+      <a href="{% url 'report_create' %}" class="sc-btn-outline">+ Tambah</a>
     {% endif %}
-</body>
-</html>
+  </div>
+
+  <!-- Ilustrasi SVG animasi -->
+  <div class="sc-hero-illo">
+    <svg viewBox="0 0 320 260" xmlns="http://www.w3.org/2000/svg" width="100%">
+
+      <!-- Latar: jalan & gedung -->
+      <!-- Gedung kiri -->
+      <rect x="10" y="100" width="44" height="130" rx="3" fill="#1e3a5f" opacity="0.7"/>
+      <rect x="14" y="108" width="8"  height="8"  rx="1" fill="#f5a623" opacity="0.8"/>
+      <rect x="26" y="108" width="8"  height="8"  rx="1" fill="#f5a623" opacity="0.5"/>
+      <rect x="38" y="108" width="8"  height="8"  rx="1" fill="#f5a623" opacity="0.9"/>
+      <rect x="14" y="122" width="8"  height="8"  rx="1" fill="#f5a623" opacity="0.4"/>
+      <rect x="26" y="122" width="8"  height="8"  rx="1" fill="#f5a623" opacity="0.7"/>
+      <rect x="38" y="122" width="8"  height="8"  rx="1" fill="#f5a623" opacity="0.6"/>
+      <rect x="14" y="136" width="8"  height="8"  rx="1" fill="#f5a623" opacity="0.8"/>
+      <rect x="26" y="136" width="8"  height="8"  rx="1" fill="#f5a623" opacity="0.3"/>
+      <rect x="38" y="136" width="8"  height="8"  rx="1" fill="#f5a623" opacity="0.7"/>
+
+      <!-- Gedung kanan tinggi -->
+      <rect x="260" y="60" width="50" height="170" rx="3" fill="#1e3a5f" opacity="0.7"/>
+      <rect x="264" y="68" width="8"  height="8"  rx="1" fill="#00c6ff" opacity="0.5"/>
+      <rect x="276" y="68" width="8"  height="8"  rx="1" fill="#00c6ff" opacity="0.8"/>
+      <rect x="288" y="68" width="8"  height="8"  rx="1" fill="#00c6ff" opacity="0.4"/>
+      <rect x="264" y="82" width="8"  height="8"  rx="1" fill="#00c6ff" opacity="0.7"/>
+      <rect x="276" y="82" width="8"  height="8"  rx="1" fill="#00c6ff" opacity="0.3"/>
+      <rect x="288" y="82" width="8"  height="8"  rx="1" fill="#00c6ff" opacity="0.9"/>
+      <rect x="264" y="96" width="8"  height="8"  rx="1" fill="#00c6ff" opacity="0.5"/>
+      <rect x="276" y="96" width="8"  height="8"  rx="1" fill="#00c6ff" opacity="0.8"/>
+      <rect x="288" y="96" width="8"  height="8"  rx="1" fill="#00c6ff" opacity="0.6"/>
+      <rect x="264" y="110" width="8" height="8"  rx="1" fill="#00c6ff" opacity="0.4"/>
+      <rect x="276" y="110" width="8" height="8"  rx="1" fill="#00c6ff" opacity="0.7"/>
+
+      <!-- Gedung tengah kecil -->
+      <rect x="230" y="130" width="30" height="100" rx="2" fill="#162d4e" opacity="0.6"/>
+      <rect x="234" y="136" width="6" height="6" rx="1" fill="#f5a623" opacity="0.6"/>
+      <rect x="244" y="136" width="6" height="6" rx="1" fill="#f5a623" opacity="0.4"/>
+      <rect x="234" y="148" width="6" height="6" rx="1" fill="#f5a623" opacity="0.8"/>
+      <rect x="244" y="148" width="6" height="6" rx="1" fill="#f5a623" opacity="0.5"/>
+
+      <!-- Jalan / tanah -->
+      <rect x="0" y="228" width="320" height="32" rx="0" fill="#0d1f3c"/>
+      <!-- Garis jalan -->
+      <line x1="0" y1="244" x2="320" y2="244" stroke="#f5a623" stroke-width="1.5" stroke-dasharray="16 10" class="road-line"/>
+
+      <!-- Lampu jalan kiri -->
+      <line x1="58" y1="228" x2="58" y2="170" stroke="#3a5a8a" stroke-width="3" stroke-linecap="round"/>
+      <path d="M58 170 Q58 158 70 158" stroke="#3a5a8a" stroke-width="3" fill="none" stroke-linecap="round"/>
+      <circle cx="72" cy="157" r="5" fill="#ffd700" class="lamp-circle" opacity="0.9"/>
+
+      <!-- Lampu jalan kanan -->
+      <line x1="240" y1="228" x2="240" y2="170" stroke="#3a5a8a" stroke-width="3" stroke-linecap="round"/>
+      <path d="M240 170 Q240 158 228 158" stroke="#3a5a8a" stroke-width="3" fill="none" stroke-linecap="round"/>
+      <circle cx="226" cy="157" r="5" fill="#ffd700" class="lamp-circle" opacity="0.9"/>
+
+      <!-- Lubang jalan / masalah -->
+      <ellipse cx="80" cy="232" rx="18" ry="6" fill="#0a1628" opacity="0.9"/>
+      <ellipse cx="80" cy="230" rx="14" ry="4" fill="#061020"/>
+      <!-- Tanda seru alert di atas lubang -->
+      <g class="alert-icon">
+        <circle cx="82" cy="108" r="14" fill="#e74c3c" opacity="0.9"/>
+        <circle class="pulse-ring" cx="82" cy="108" r="12" fill="none" stroke="#e74c3c" stroke-width="2"/>
+        <text x="82" y="113" text-anchor="middle" font-size="14" font-weight="bold" fill="white" font-family="sans-serif">!</text>
+      </g>
+      <!-- Garis dari alert ke lubang -->
+      <line x1="82" y1="122" x2="80" y2="224" stroke="#e74c3c" stroke-width="1" stroke-dasharray="4 4" opacity="0.4"/>
+
+      <!-- KARAKTER ORANG -->
+      <g class="char-body">
+        <!-- Kaki kiri -->
+        <rect x="148" y="208" width="10" height="22" rx="5" fill="#2980b9"/>
+        <!-- Kaki kanan -->
+        <rect x="162" y="208" width="10" height="22" rx="5" fill="#2980b9"/>
+        <!-- Sepatu kiri -->
+        <rect x="145" y="226" width="14" height="6" rx="3" fill="#1a252f"/>
+        <!-- Sepatu kanan -->
+        <rect x="161" y="226" width="14" height="6" rx="3" fill="#1a252f"/>
+        <!-- Badan -->
+        <rect x="143" y="160" width="34" height="52" rx="10" fill="#3498db"/>
+        <!-- Dasi / badge laporan -->
+        <rect x="155" y="168" width="10" height="14" rx="2" fill="#2471a3"/>
+        <rect x="157" y="170" width="6" height="2" rx="1" fill="#aed6f1"/>
+        <rect x="157" y="174" width="6" height="2" rx="1" fill="#aed6f1"/>
+        <rect x="157" y="178" width="4" height="2" rx="1" fill="#aed6f1"/>
+        <!-- Leher -->
+        <rect x="153" y="150" width="14" height="14" rx="4" fill="#f0c27f"/>
+        <!-- Kepala -->
+        <ellipse cx="160" cy="138" rx="22" ry="20" fill="#f0c27f"/>
+        <!-- Rambut -->
+        <ellipse cx="160" cy="120" rx="22" ry="10" fill="#2c3e50"/>
+        <rect x="138" y="120" width="44" height="10" rx="0" fill="#2c3e50"/>
+        <!-- Mata kiri -->
+        <ellipse class="char-eye-l" cx="153" cy="136" rx="3" ry="3.5" fill="#2c3e50"/>
+        <!-- Mata kanan -->
+        <ellipse class="char-eye-r" cx="167" cy="136" rx="3" ry="3.5" fill="#2c3e50"/>
+        <!-- Sorot mata -->
+        <circle cx="154" cy="135" r="1" fill="white"/>
+        <circle cx="168" cy="135" r="1" fill="white"/>
+        <!-- Mulut senyum -->
+        <path d="M154 144 Q160 149 166 144" stroke="#c0392b" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+        <!-- Tangan kiri (pegang HP) -->
+        <rect x="127" y="162" width="14" height="22" rx="7" fill="#f0c27f"/>
+        <!-- HP -->
+        <rect x="113" y="155" width="16" height="26" rx="3" fill="#1a252f"/>
+        <rect x="115" y="158" width="12" height="18" rx="2" fill="#3498db" opacity="0.8"/>
+        <rect x="119" y="175" width="4" height="1" rx="1" fill="white" opacity="0.6"/>
+        <!-- Tangan kanan (angkat / keluhan) -->
+        <g class="char-arm-r">
+          <rect x="179" y="158" width="14" height="22" rx="7" fill="#f0c27f"/>
+          <!-- Jari telunjuk -->
+          <rect x="186" y="142" width="6" height="18" rx="3" fill="#f0c27f"/>
+        </g>
+      </g>
+
+      <!-- CHAT BUBBLE KELUHAN 1 -->
+      <g class="bubble">
+        <rect x="185" y="58" width="108" height="42" rx="12" fill="white" opacity="0.95"/>
+        <polygon points="195,100 205,100 200,112" fill="white" opacity="0.95"/>
+        <text x="196" y="76" font-size="8" fill="#e74c3c" font-weight="bold" font-family="sans-serif">⚠ Jalan Berlubang!</text>
+        <text x="196" y="88" font-size="7.5" fill="#555" font-family="sans-serif">Jl. Diponegoro No.12</text>
+        <circle class="dot1" cx="202" cy="97" r="2.5" fill="#3498db"/>
+        <circle class="dot2" cx="210" cy="97" r="2.5" fill="#3498db"/>
+        <circle class="dot3" cx="218" cy="97" r="2.5" fill="#3498db"/>
+      </g>
+
+      <!-- CHAT BUBBLE 2 (offset timing) -->
+      <g class="bubble2">
+        <rect x="185" y="58" width="108" height="42" rx="12" fill="white" opacity="0.95"/>
+        <polygon points="195,100 205,100 200,112" fill="white" opacity="0.95"/>
+        <text x="196" y="76" font-size="8" fill="#e67e22" font-weight="bold" font-family="sans-serif">🚧 Lampu Mati!</text>
+        <text x="196" y="88" font-size="7.5" fill="#555" font-family="sans-serif">Jl. Merdeka No.45</text>
+        <circle class="dot1" cx="202" cy="97" r="2.5" fill="#3498db"/>
+        <circle class="dot2" cx="210" cy="97" r="2.5" fill="#3498db"/>
+        <circle class="dot3" cx="218" cy="97" r="2.5" fill="#3498db"/>
+      </g>
+
+    </svg>
+  </div>
+</div>
+
+<!-- STATS STRIP -->
+<div class="sc-stats-strip">
+  <div class="sc-stat-card">
+    <div class="sc-stat-number n-total">{{ reports.count }}</div>
+    <div class="sc-stat-label">Total Laporan</div>
+  </div>
+  <div class="sc-stat-card">
+    <div class="sc-stat-number n-report">{{ reports_reported }}</div>
+    <div class="sc-stat-label">Dilaporkan</div>
+  </div>
+  <div class="sc-stat-card">
+    <div class="sc-stat-number n-progress">{{ reports_in_progress }}</div>
+    <div class="sc-stat-label">Diproses</div>
+  </div>
+  <div class="sc-stat-card">
+    <div class="sc-stat-number n-done">{{ reports_resolved }}</div>
+    <div class="sc-stat-label">Selesai</div>
+  </div>
+</div>
+
+<!-- RECENT REPORTS -->
+<div class="sc-section-title">📰 Laporan Terbaru</div>
+
+{% for report in reports|slice:":5" %}
+<div class="sc-report-card">
+  <div class="sc-report-left">
+    <div class="sc-report-title">{{ report.title }}</div>
+    <div class="sc-report-meta">{{ report.category }} &nbsp;·&nbsp; 📍 {{ report.location }}</div>
+  </div>
+  <div class="sc-report-right">
+    {% if report.status == 'REPORTED' %}
+      <span class="sc-badge sc-badge-reported">📢 Reported</span>
+    {% elif report.status == 'VERIFIED' %}
+      <span class="sc-badge sc-badge-verified">✔ Verified</span>
+    {% elif report.status == 'IN_PROGRESS' %}
+      <span class="sc-badge sc-badge-progress">⏳ In Progress</span>
+    {% else %}
+      <span class="sc-badge sc-badge-resolved">✅ Resolved</span>
+    {% endif %}
+    <a href="{% url 'report_detail' report.id %}" class="sc-detail-btn">Detail →</a>
+  </div>
+</div>
+{% empty %}
+<div class="alert alert-light text-center py-4" style="border-radius:14px; font-family:'DM Sans',sans-serif;">
+  Belum ada laporan saat ini.
+</div>
+{% endfor %}
+
+{% if reports.count > 5 %}
+<a href="{% url 'report_list' %}" class="sc-view-all">
+  Lihat semua {{ reports.count }} laporan &rarr;
+</a>
+{% endif %}
+
+{% endblock %}
