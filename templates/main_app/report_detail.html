@@ -1,26 +1,238 @@
 {% extends 'base.html' %}
-{% block content %}
+{% block title %}Detail Laporan - Smart City{% endblock %}
 
-<!-- 🔥 BREADCRUMB -->
-<nav class="container mt-3">
-  <ol class="breadcrumb">
-    <li class="breadcrumb-item"><a href="/">🏠 Home</a></li>
-    <li class="breadcrumb-item"><a href="{% url 'report_list' %}">Reports</a></li>
+{% block content %}
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@300;400;500&display=swap');
+
+:root {
+  --city-blue: #1a3a6b;
+  --city-accent: #f5a623;
+  --text-primary: #0d1b2a;
+  --text-muted: #5a6a7a;
+}
+
+.rd-wrap { max-width: 720px; margin: 0 auto; }
+
+/* STATUS ACCENT BAR */
+.rd-card {
+  background: #fff;
+  border: 1px solid #e8eef6;
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+}
+.rd-accent-bar { height: 5px; width: 100%; }
+.accent-reported  { background: linear-gradient(90deg, #f59e0b, #fbbf24); }
+.accent-verified  { background: linear-gradient(90deg, #3b82f6, #60a5fa); }
+.accent-progress  { background: linear-gradient(90deg, #0ea5e9, #38bdf8); }
+.accent-resolved  { background: linear-gradient(90deg, #10b981, #34d399); }
+
+.rd-body { padding: 2rem; }
+
+/* JUDUL */
+.rd-title {
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(1.2rem, 3vw, 1.6rem);
+  font-weight: 800; color: var(--text-primary);
+  line-height: 1.25; margin-bottom: 1.2rem;
+  letter-spacing: -0.02em;
+}
+
+/* STATUS BADGE */
+.rd-status-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.72rem; font-weight: 500;
+  letter-spacing: 0.06em; text-transform: uppercase;
+  padding: 0.35rem 1rem; border-radius: 100px;
+  margin-bottom: 1.5rem;
+}
+.badge-reported  { background: #fef3c7; color: #92400e; }
+.badge-verified  { background: #dbeafe; color: #1e40af; }
+.badge-progress  { background: #e0f2fe; color: #0369a1; }
+.badge-resolved  { background: #d1fae5; color: #065f46; }
+
+/* INFO ROWS */
+.rd-info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 1.2rem;
+}
+.rd-info-item {
+  background: #f8faff;
+  border: 1px solid #e8eef6;
+  border-radius: 12px;
+  padding: 1rem 1.1rem;
+}
+.rd-info-label {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.68rem; font-weight: 500;
+  text-transform: uppercase; letter-spacing: 0.08em;
+  color: var(--text-muted); margin-bottom: 4px;
+}
+.rd-info-value {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.9rem; font-weight: 500;
+  color: var(--text-primary);
+}
+
+/* DESKRIPSI */
+.rd-desc-box {
+  background: #f8faff;
+  border: 1px solid #e8eef6;
+  border-radius: 12px;
+  padding: 1.1rem;
+  margin-bottom: 1.5rem;
+}
+.rd-desc-label {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.68rem; font-weight: 500;
+  text-transform: uppercase; letter-spacing: 0.08em;
+  color: var(--text-muted); margin-bottom: 6px;
+}
+.rd-desc-text {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.9rem; color: var(--text-primary);
+  line-height: 1.7;
+}
+
+/* LOKASI */
+.rd-location {
+  display: flex; align-items: flex-start; gap: 8px;
+  background: #f0fdf4; border: 1px solid #a7f3d0;
+  border-radius: 12px; padding: 1rem 1.1rem;
+  margin-bottom: 1.5rem;
+}
+.rd-location-icon { font-size: 1.1rem; flex-shrink: 0; margin-top: 1px; }
+.rd-location-text {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.88rem; color: #065f46; line-height: 1.5;
+}
+
+/* DIVIDER */
+.rd-divider { height: 1px; background: #f0f4f9; margin: 1.2rem 0; }
+
+/* BUTTONS */
+.rd-btn-back {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.88rem; font-weight: 500;
+  padding: 10px 22px; border-radius: 100px;
+  border: 1.5px solid #dde5f0; background: #f8faff;
+  color: var(--text-muted); text-decoration: none;
+  display: inline-flex; align-items: center; gap: 6px;
+  transition: all 0.18s;
+}
+.rd-btn-back:hover { border-color: var(--city-blue); color: var(--city-blue); }
+
+.rd-btn-edit {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.88rem; font-weight: 500;
+  padding: 10px 22px; border-radius: 100px;
+  background: #eff6ff; color: #1e40af;
+  border: 1.5px solid #bfdbfe;
+  text-decoration: none;
+  display: inline-flex; align-items: center; gap: 6px;
+  transition: all 0.18s;
+}
+.rd-btn-edit:hover { background: #1e40af; color: #fff; border-color: #1e40af; }
+
+.rd-btn-delete {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.88rem; font-weight: 500;
+  padding: 10px 22px; border-radius: 100px;
+  background: #fff0f0; color: #c0392b;
+  border: 1.5px solid #fcc;
+  text-decoration: none;
+  display: inline-flex; align-items: center; gap: 6px;
+  transition: all 0.18s;
+}
+.rd-btn-delete:hover { background: #c0392b; color: #fff; border-color: #c0392b; }
+
+.rd-actions { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+
+@media (max-width: 576px) {
+  .rd-body { padding: 1.4rem; }
+  .rd-info-grid { grid-template-columns: 1fr; }
+  .rd-actions { flex-direction: column; }
+  .rd-btn-back, .rd-btn-edit, .rd-btn-delete { width: 100%; justify-content: center; }
+}
+</style>
+
+<!-- Breadcrumb -->
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb" style="font-family:'DM Sans',sans-serif; font-size:0.8rem;">
+    <li class="breadcrumb-item"><a href="/" style="color:#1a3a6b;">🏠 Home</a></li>
+    <li class="breadcrumb-item"><a href="{% url 'report_list' %}" style="color:#1a3a6b;">Reports</a></li>
     <li class="breadcrumb-item active">Detail</li>
   </ol>
 </nav>
 
-<div class="container mt-4">
-    <div class="card p-4 shadow">
-        <h2>{{ report.title }}</h2>
+<div class="rd-wrap">
+  <div class="rd-card">
 
-        <p><b>Kategori:</b> {{ report.category }}</p>
-        <p><b>Deskripsi:</b> {{ report.description }}</p>
-        <p><b>Lokasi:</b> {{ report.location }}</p>
-        <p><b>Status:</b> {{ report.status }}</p>
-
-        <a href="{% url 'report_list' %}" class="btn btn-secondary">Kembali</a>
+    <!-- Accent bar warna sesuai status -->
+    <div class="rd-accent-bar
+      {% if report.status == 'REPORTED' %}accent-reported
+      {% elif report.status == 'VERIFIED' %}accent-verified
+      {% elif report.status == 'IN_PROGRESS' %}accent-progress
+      {% else %}accent-resolved{% endif %}">
     </div>
+
+    <div class="rd-body">
+
+      <!-- Status badge -->
+      {% if report.status == 'REPORTED' %}
+        <span class="rd-status-badge badge-reported">📢 Reported</span>
+      {% elif report.status == 'VERIFIED' %}
+        <span class="rd-status-badge badge-verified">✔ Verified</span>
+      {% elif report.status == 'IN_PROGRESS' %}
+        <span class="rd-status-badge badge-progress">⏳ In Progress</span>
+      {% else %}
+        <span class="rd-status-badge badge-resolved">✅ Resolved</span>
+      {% endif %}
+
+      <!-- Judul -->
+      <h1 class="rd-title">{{ report.title }}</h1>
+
+      <!-- Info grid -->
+      <div class="rd-info-grid">
+        <div class="rd-info-item">
+          <div class="rd-info-label">🏷 Kategori</div>
+          <div class="rd-info-value">{{ report.category }}</div>
+        </div>
+        <div class="rd-info-item">
+          <div class="rd-info-label">📅 Tanggal</div>
+          <div class="rd-info-value">{{ report.created_at|date:"d M Y" }}</div>
+        </div>
+      </div>
+
+      <!-- Deskripsi -->
+      <div class="rd-desc-box">
+        <div class="rd-desc-label">📋 Deskripsi</div>
+        <div class="rd-desc-text">{{ report.description }}</div>
+      </div>
+
+      <!-- Lokasi -->
+      <div class="rd-location">
+        <div class="rd-location-icon">📍</div>
+        <div class="rd-location-text">{{ report.location }}</div>
+      </div>
+
+      <div class="rd-divider"></div>
+
+      <!-- Actions -->
+      <div class="rd-actions">
+        <a href="{% url 'report_list' %}" class="rd-btn-back">← Kembali</a>
+        {% if user.is_authenticated and user.is_admin %}
+          <a href="{% url 'report_update' report.id %}" class="rd-btn-edit">✏ Edit</a>
+          <a href="{% url 'report_delete' report.id %}" class="rd-btn-delete">🗑 Hapus</a>
+        {% endif %}
+      </div>
+
+    </div>
+  </div>
 </div>
 
 {% endblock %}

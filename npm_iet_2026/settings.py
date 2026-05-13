@@ -37,11 +37,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',               # ✅ TAMBAHAN LAB 9
     'main_app',
-    'usermanagement_24782005',  # ✅ TAMBAHAN LAB 6
-    'dashboard_24782005',       # ✅ TAMBAHAN LAB 7
-    'about',                    # ✅ TAMBAHAN
-    'contacts',                 # ✅ TAMBAHAN
+    'usermanagement_24782005',      # ✅ TAMBAHAN LAB 6
+    'dashboard_24782005',           # ✅ TAMBAHAN LAB 7
+    'about',                        # ✅ TAMBAHAN
+    'contacts',                     # ✅ TAMBAHAN
 ]
 
 MIDDLEWARE = [

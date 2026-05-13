@@ -8,4 +8,5 @@ urlpatterns = [
     path('about/', include('about.urls')),
     path('auth/', include('usermanagement_24782005.urls')),  # ✅ TAMBAHAN LAB 6
     path('dashboard/', include('dashboard_24782005.urls')),  # ✅ TAMBAHAN LAB 7
+    path('api/', include('main_app.api_urls')),              # ✅ TAMBAHAN LAB 9
 ]

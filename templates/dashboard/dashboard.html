@@ -4,138 +4,592 @@
 
 {% block content %}
 
-<h4 class="mb-4 fw-bold">📊 Dashboard Smart City</h4>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@300;400;500&display=swap');
+
+:root {
+  --city-blue: #1a3a6b;
+  --city-accent: #f5a623;
+  --text-primary: #0d1b2a;
+  --text-muted: #5a6a7a;
+}
+
+/* ── HERO HEADER ── */
+.db-hero {
+  background: linear-gradient(135deg, #0d1f3c 0%, #1a3a6b 60%, #0a2a5c 100%);
+  border-radius: 20px;
+  padding: 1.8rem 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  margin-bottom: 1.8rem;
+  overflow: hidden;
+  position: relative;
+}
+.db-hero::before {
+  content: '';
+  position: absolute; inset: 0;
+  background-image: radial-gradient(circle, rgba(255,255,255,0.5) 1px, transparent 1px);
+  background-size: 40px 40px;
+  opacity: 0.1;
+}
+.db-hero-left { position: relative; z-index: 1; color: #fff; }
+.db-hero-tag {
+  display: inline-block;
+  background: rgba(245,166,35,0.15);
+  border: 1px solid rgba(245,166,35,0.45);
+  color: var(--city-accent);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.68rem; font-weight: 500;
+  letter-spacing: 0.15em; text-transform: uppercase;
+  padding: 4px 12px; border-radius: 100px; margin-bottom: 8px;
+}
+.db-hero-title {
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(1.4rem, 2.5vw, 2rem);
+  font-weight: 800; line-height: 1.15; margin-bottom: 4px;
+}
+.db-hero-title span {
+  background: linear-gradient(90deg, #f5a623, #ffdb70);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.db-hero-sub {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.85rem; font-weight: 300;
+  color: rgba(255,255,255,0.65);
+}
+
+/* Animasi ilustrasi hero */
+@keyframes db-spin    { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
+@keyframes db-float   { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-5px)} }
+@keyframes db-bar1    { 0%{height:0} 100%{height:40px} }
+@keyframes db-bar2    { 0%{height:0} 100%{height:60px} }
+@keyframes db-bar3    { 0%{height:0} 100%{height:30px} }
+
+.db-illo { animation: db-float 3s ease-in-out infinite; }
+.db-ring { animation: db-spin 6s linear infinite; transform-origin: 155px 50px; }
+
+/* ── STAT CARDS ── */
+.db-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-bottom: 1.5rem;
+}
+.db-stat {
+  border-radius: 16px;
+  padding: 1.4rem 1.2rem;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.2s, box-shadow 0.2s;
+  cursor: default;
+}
+.db-stat:hover { transform: translateY(-3px); box-shadow: 0 10px 30px rgba(0,0,0,0.15); }
+.db-stat::after {
+  content: '';
+  position: absolute;
+  top: -20px; right: -20px;
+  width: 80px; height: 80px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.08);
+}
+.db-stat-num {
+  font-family: 'Syne', sans-serif;
+  font-size: 2.4rem; font-weight: 800;
+  line-height: 1; margin-bottom: 4px;
+  color: #fff;
+}
+.db-stat-label {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.75rem; font-weight: 500;
+  text-transform: uppercase; letter-spacing: 0.08em;
+  color: rgba(255,255,255,0.75);
+}
+.db-stat-icon {
+  position: absolute; top: 1rem; right: 1rem;
+  font-size: 1.6rem; opacity: 0.35;
+}
+
+.stat-reported  { background: linear-gradient(135deg, #374151, #6b7280); }
+.stat-verified  { background: linear-gradient(135deg, #1e40af, #3b82f6); }
+.stat-progress  { background: linear-gradient(135deg, #92400e, #f59e0b); }
+.stat-resolved  { background: linear-gradient(135deg, #065f46, #10b981); }
+
+/* Animasi count-up */
+@keyframes db-count { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+.db-stat-num { animation: db-count 0.6s ease forwards; }
+
+/* ── SECTION TITLE ── */
+.db-section {
+  font-family: 'Syne', sans-serif;
+  font-size: 1rem; font-weight: 700;
+  color: var(--text-primary); margin-bottom: 1rem;
+  display: flex; align-items: center; gap: 8px;
+}
+.db-section::after {
+  content: ''; flex: 1; height: 1px;
+  background: linear-gradient(90deg, #e2e8f0, transparent);
+}
+
+/* ── CHART CARDS ── */
+.db-chart-grid {
+  display: grid;
+  grid-template-columns: 5fr 7fr;
+  gap: 12px;
+  margin-bottom: 1.5rem;
+}
+.db-card {
+  background: #fff;
+  border: 1px solid #e8eef6;
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.04);
+}
+.db-card-header {
+  padding: 1rem 1.4rem;
+  border-bottom: 1px solid #f0f4f9;
+  display: flex; align-items: center; gap: 8px;
+}
+.db-card-header-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 0.9rem; font-weight: 700;
+  color: var(--text-primary);
+}
+.db-card-body {
+  padding: 1.4rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Spinning doughnut wrapper */
+.db-doughnut-wrap {
+  position: relative;
+  width: 260px; height: 260px;
+  display: flex; align-items: center; justify-content: center;
+}
+.db-doughnut-center {
+  position: absolute;
+  text-align: center;
+  pointer-events: none;
+}
+.db-doughnut-total {
+  font-family: 'Syne', sans-serif;
+  font-size: 1.8rem; font-weight: 800;
+  color: var(--text-primary); line-height: 1;
+}
+.db-doughnut-sub {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.7rem; color: var(--text-muted);
+  text-transform: uppercase; letter-spacing: 0.08em;
+}
+
+/* Orbit dot berputar */
+@keyframes db-orbit {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+@keyframes db-orbit-rev {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(-360deg); }
+}
+.db-orbit-ring {
+  position: absolute; inset: -20px;
+  border-radius: 50%;
+  animation: db-orbit 8s linear infinite;
+}
+.db-orbit-ring-2 {
+  position: absolute; inset: -36px;
+  border-radius: 50%;
+  animation: db-orbit-rev 14s linear infinite;
+}
+/* Dot di orbit */
+.db-orbit-dot {
+  position: absolute;
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  border: 2px solid white;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+}
+/* Posisi dot di 4 sudut orbit (atas, kanan, bawah, kiri) */
+.db-orbit-ring .db-orbit-dot:nth-child(1) { background:#6b7280; top:-5px;  left:50%; transform:translateX(-50%); } /* REPORTED  - abu  */
+.db-orbit-ring .db-orbit-dot:nth-child(2) { background:#3b82f6; top:50%;   right:-5px; transform:translateY(-50%); } /* VERIFIED  - biru */
+.db-orbit-ring .db-orbit-dot:nth-child(3) { background:#f59e0b; bottom:-5px; left:50%; transform:translateX(-50%); } /* PROGRESS  - kuning */
+.db-orbit-ring .db-orbit-dot:nth-child(4) { background:#10b981; top:50%;   left:-5px; transform:translateY(-50%); } /* RESOLVED  - hijau */
+/* Dot orbit luar (lebih kecil, posisi diagonal) */
+.db-orbit-ring-2 .db-orbit-dot { width: 7px; height: 7px; }
+.db-orbit-ring-2 .db-orbit-dot:nth-child(1) { background:#6b7280; top:14%; left:14%; }
+.db-orbit-ring-2 .db-orbit-dot:nth-child(2) { background:#3b82f6; top:14%; right:14%; }
+.db-orbit-ring-2 .db-orbit-dot:nth-child(3) { background:#f59e0b; bottom:14%; right:14%; }
+.db-orbit-ring-2 .db-orbit-dot:nth-child(4) { background:#10b981; bottom:14%; left:14%; }
+
+/* Bar chart wrapper */
+.db-bar-wrap { width: 100%; }
+
+/* ── TABEL ── */
+.db-table-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 1.5rem;
+}
+.db-table { width: 100%; border-collapse: collapse; }
+.db-table thead th {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.72rem; font-weight: 500;
+  text-transform: uppercase; letter-spacing: 0.08em;
+  color: var(--text-muted);
+  padding: 10px 14px;
+  border-bottom: 1px solid #f0f4f9;
+  background: #fafbfc;
+}
+.db-table tbody tr {
+  transition: background 0.15s;
+}
+.db-table tbody tr:hover { background: #f8faff; }
+.db-table tbody td {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.82rem; color: var(--text-primary);
+  padding: 10px 14px;
+  border-bottom: 1px solid #f5f7fa;
+  max-width: 180px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.db-table tbody td:last-child {
+  color: var(--text-muted); font-size: 0.76rem;
+  white-space: nowrap; max-width: unset; overflow: unset;
+}
+.db-cat-badge {
+  font-size: 0.68rem; font-weight: 500;
+  padding: 2px 8px; border-radius: 100px;
+  background: #eff6ff; color: #1e40af;
+  white-space: nowrap;
+}
+
+/* Skeleton loading */
+.db-skeleton {
+  background: linear-gradient(90deg, #f0f4f9 25%, #e8eef6 50%, #f0f4f9 75%);
+  background-size: 200% 100%;
+  animation: db-shimmer 1.4s infinite;
+  border-radius: 4px; height: 14px; display: block; margin: 4px 0;
+}
+@keyframes db-shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+
+@media (max-width: 768px) {
+  .db-stats { grid-template-columns: repeat(2, 1fr); }
+  .db-chart-grid { grid-template-columns: 1fr; }
+  .db-table-grid { grid-template-columns: 1fr; }
+  .db-hero { flex-direction: column; padding: 1.4rem; }
+}
+</style>
+
+<!-- Breadcrumb -->
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb" style="font-family:'DM Sans',sans-serif; font-size:0.82rem;">
+    <li class="breadcrumb-item"><a href="/" style="color:var(--city-blue);">🏠 Home</a></li>
+    <li class="breadcrumb-item active">Dashboard</li>
+  </ol>
+</nav>
+
+<!-- HERO HEADER -->
+<div class="db-hero">
+  <div class="db-hero-left">
+    <div class="db-hero-tag">📊 Statistik Real-time</div>
+    <h1 class="db-hero-title">Smart City<span>Dashboard</span></h1>
+    <p class="db-hero-sub">Pantau seluruh laporan kota secara live dan terstruktur</p>
+  </div>
+  <!-- Ilustrasi mini chart animasi -->
+  <div style="position:relative;z-index:1;flex-shrink:0;">
+    <svg width="180" height="110" viewBox="0 0 180 110" xmlns="http://www.w3.org/2000/svg">
+      <g class="db-illo">
+        <!-- Base -->
+        <rect x="10" y="95" width="160" height="2" rx="1" fill="rgba(255,255,255,0.2)"/>
+        <!-- Bar 1 -->
+        <rect x="25" y="55" width="22" height="40" rx="4" fill="#3b82f6" opacity="0.85"/>
+        <!-- Bar 2 -->
+        <rect x="55" y="35" width="22" height="60" rx="4" fill="#10b981" opacity="0.85"/>
+        <!-- Bar 3 -->
+        <rect x="85" y="65" width="22" height="30" rx="4" fill="#f59e0b" opacity="0.85"/>
+        <!-- Bar 4 -->
+        <rect x="115" y="45" width="22" height="50" rx="4" fill="#e74c3c" opacity="0.85"/>
+        <!-- Bar 5 -->
+        <rect x="145" y="25" width="22" height="70" rx="4" fill="#8b5cf6" opacity="0.85"/>
+        <!-- Glow di atas bar -->
+        <rect x="25" y="53" width="22" height="4" rx="2" fill="white" opacity="0.3"/>
+        <rect x="55" y="33" width="22" height="4" rx="2" fill="white" opacity="0.3"/>
+        <rect x="85" y="63" width="22" height="4" rx="2" fill="white" opacity="0.3"/>
+        <rect x="115" y="43" width="22" height="4" rx="2" fill="white" opacity="0.3"/>
+        <rect x="145" y="23" width="22" height="4" rx="2" fill="white" opacity="0.3"/>
+        <!-- Line chart di atas -->
+        <polyline points="36,52 66,32 96,62 126,42 156,22"
+                  stroke="rgba(255,255,255,0.5)" stroke-width="1.5" fill="none"
+                  stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="3 2"/>
+        <!-- Titik di line -->
+        <circle cx="36"  cy="52" r="2.5" fill="white" opacity="0.8"/>
+        <circle cx="66"  cy="32" r="2.5" fill="white" opacity="0.8"/>
+        <circle cx="96"  cy="62" r="2.5" fill="white" opacity="0.8"/>
+        <circle cx="126" cy="42" r="2.5" fill="white" opacity="0.8"/>
+        <circle cx="156" cy="22" r="2.5" fill="white" opacity="0.8"/>
+      </g>
+      <!-- Ring berputar di pojok -->
+      <g class="db-ring">
+        <circle cx="155" cy="50" r="14" fill="none" stroke="rgba(245,166,35,0.4)" stroke-width="2" stroke-dasharray="6 4"/>
+      </g>
+    </svg>
+  </div>
+</div>
 
 <!-- STAT CARDS -->
-<div class="row g-3 mb-4" id="stat-cards">
-  <div class="col-6 col-md-3">
-    <div class="card text-white bg-secondary h-100">
-      <div class="card-body text-center">
-        <div class="fs-2 fw-bold" id="count-reported">-</div>
-        <div class="small">Reported</div>
-      </div>
-    </div>
+<div class="db-stats">
+  <div class="db-stat stat-reported">
+    <div class="db-stat-icon">📢</div>
+    <div class="db-stat-num" id="count-reported">-</div>
+    <div class="db-stat-label">Reported</div>
   </div>
-  <div class="col-6 col-md-3">
-    <div class="card text-white bg-primary h-100">
-      <div class="card-body text-center">
-        <div class="fs-2 fw-bold" id="count-verified">-</div>
-        <div class="small">Verified</div>
-      </div>
-    </div>
+  <div class="db-stat stat-verified">
+    <div class="db-stat-icon">✔</div>
+    <div class="db-stat-num" id="count-verified">-</div>
+    <div class="db-stat-label">Verified</div>
   </div>
-  <div class="col-6 col-md-3">
-    <div class="card text-white bg-warning h-100">
-      <div class="card-body text-center">
-        <div class="fs-2 fw-bold" id="count-inprogress">-</div>
-        <div class="small">In Progress</div>
-      </div>
-    </div>
+  <div class="db-stat stat-progress">
+    <div class="db-stat-icon">⏳</div>
+    <div class="db-stat-num" id="count-inprogress">-</div>
+    <div class="db-stat-label">In Progress</div>
   </div>
-  <div class="col-6 col-md-3">
-    <div class="card text-white bg-success h-100">
-      <div class="card-body text-center">
-        <div class="fs-2 fw-bold" id="count-resolved">-</div>
-        <div class="small">Resolved</div>
-      </div>
-    </div>
+  <div class="db-stat stat-resolved">
+    <div class="db-stat-icon">✅</div>
+    <div class="db-stat-num" id="count-resolved">-</div>
+    <div class="db-stat-label">Resolved</div>
   </div>
 </div>
 
 <!-- CHARTS -->
-<div class="row g-4 mb-4">
-  <div class="col-md-5">
-    <div class="card shadow-sm h-100">
-      <div class="card-header fw-semibold">🍩 Distribusi Status Laporan</div>
-      <div class="card-body d-flex justify-content-center align-items-center">
-        <canvas id="statusChart" style="max-height: 280px;"></canvas>
+<div class="db-section">📈 Distribusi Laporan</div>
+<div class="db-chart-grid">
+
+  <!-- Doughnut -->
+  <div class="db-card">
+    <div class="db-card-header">
+      <span>🍩</span>
+      <div class="db-card-header-title">Distribusi Status</div>
+    </div>
+    <div class="db-card-body" style="flex-direction:column; gap:1rem;">
+      <div class="db-doughnut-wrap">
+        <!-- Ring orbit luar — dot kecil diagonal -->
+        <div class="db-orbit-ring-2">
+          <div class="db-orbit-dot"></div>
+          <div class="db-orbit-dot"></div>
+          <div class="db-orbit-dot"></div>
+          <div class="db-orbit-dot"></div>
+        </div>
+        <!-- Ring orbit dalam — dot besar sesuai warna status -->
+        <div class="db-orbit-ring">
+          <div class="db-orbit-dot"></div>
+          <div class="db-orbit-dot"></div>
+          <div class="db-orbit-dot"></div>
+          <div class="db-orbit-dot"></div>
+        </div>
+        <canvas id="statusChart" width="240" height="240"></canvas>
+      </div>
+      <!-- Total di luar, bawah doughnut -->
+      <div style="text-align:center; margin-top:0.6rem;">
+        <div class="db-doughnut-total" id="doughnut-total" style="font-family:'Syne',sans-serif;font-size:2rem;font-weight:800;color:#0d1b2a;line-height:1;">-</div>
+        <div style="font-family:'DM Sans',sans-serif;font-size:0.7rem;font-weight:500;text-transform:uppercase;letter-spacing:0.1em;color:#5a6a7a;">Total Laporan</div>
       </div>
     </div>
   </div>
-  <div class="col-md-7">
-    <div class="card shadow-sm h-100">
-      <div class="card-header fw-semibold">📊 Distribusi Kategori Laporan</div>
-      <div class="card-body">
-        <canvas id="categoryChart" style="max-height: 280px;"></canvas>
+
+  <!-- Bar chart -->
+  <div class="db-card">
+    <div class="db-card-header">
+      <span>📊</span>
+      <div class="db-card-header-title">Distribusi Kategori</div>
+    </div>
+    <div class="db-card-body">
+      <div class="db-bar-wrap">
+        <canvas id="categoryChart" style="max-height:260px;"></canvas>
       </div>
     </div>
   </div>
+
 </div>
 
-<!-- TABEL LAPORAN -->
-<div class="row g-4 mb-4">
-  <div class="col-md-6">
-    <div class="card shadow-sm">
-      <div class="card-header fw-semibold">🆕 5 Laporan Terbaru (Reported)</div>
-      <div class="card-body p-0">
-        <table class="table table-sm table-hover mb-0">
-          <thead class="table-light">
-            <tr><th>Judul</th><th>Kategori</th><th>Tanggal</th></tr>
-          </thead>
-          <tbody id="table-reported"></tbody>
-        </table>
-      </div>
+<!-- TABEL -->
+<div class="db-section">📋 Data Laporan</div>
+<div class="db-table-grid">
+
+  <!-- Tabel Reported -->
+  <div class="db-card">
+    <div class="db-card-header">
+      <span>🆕</span>
+      <div class="db-card-header-title">5 Laporan Terbaru (Reported)</div>
     </div>
+    <table class="db-table">
+      <thead>
+        <tr>
+          <th>Judul</th>
+          <th>Kategori</th>
+          <th>Tanggal</th>
+        </tr>
+      </thead>
+      <tbody id="table-reported">
+        <tr><td colspan="3"><span class="db-skeleton" style="width:80%"></span></td></tr>
+        <tr><td colspan="3"><span class="db-skeleton" style="width:65%"></span></td></tr>
+        <tr><td colspan="3"><span class="db-skeleton" style="width:75%"></span></td></tr>
+      </tbody>
+    </table>
   </div>
-  <div class="col-md-6">
-    <div class="card shadow-sm">
-      <div class="card-header fw-semibold">✅ 5 Laporan Selesai (Resolved)</div>
-      <div class="card-body p-0">
-        <table class="table table-sm table-hover mb-0">
-          <thead class="table-light">
-            <tr><th>Judul</th><th>Kategori</th><th>Tanggal</th></tr>
-          </thead>
-          <tbody id="table-resolved"></tbody>
-        </table>
-      </div>
+
+  <!-- Tabel Resolved -->
+  <div class="db-card">
+    <div class="db-card-header">
+      <span>✅</span>
+      <div class="db-card-header-title">5 Laporan Selesai (Resolved)</div>
     </div>
+    <table class="db-table">
+      <thead>
+        <tr>
+          <th>Judul</th>
+          <th>Kategori</th>
+          <th>Tanggal</th>
+        </tr>
+      </thead>
+      <tbody id="table-resolved">
+        <tr><td colspan="3"><span class="db-skeleton" style="width:80%"></span></td></tr>
+        <tr><td colspan="3"><span class="db-skeleton" style="width:70%"></span></td></tr>
+        <tr><td colspan="3"><span class="db-skeleton" style="width:75%"></span></td></tr>
+      </tbody>
+    </table>
   </div>
+
 </div>
 
 {% endblock %}
 
 {% block extra_js %}
-<!-- Chart.js -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {
 
+  /* ── Count-up animasi ── */
+  function countUp(el, target, duration) {
+    const start = performance.now();
+    function update(now) {
+      const elapsed = Math.min((now - start) / duration, 1);
+      const ease = 1 - Math.pow(1 - elapsed, 3);
+      el.textContent = Math.round(ease * target);
+      if (elapsed < 1) requestAnimationFrame(update);
+    }
+    requestAnimationFrame(update);
+  }
+
   fetch("{% url 'dashboard_stats' %}")
     .then(res => res.json())
     .then(data => {
-      console.log('[Fetch API] Data diterima dari server:', data);
+      console.log('[Dashboard] Data:', data);
 
-      // --- STAT CARDS ---
+      /* ── STAT CARDS dengan count-up ── */
       const statusMap = {};
       data.status.forEach(s => statusMap[s.status] = s.count);
 
-      document.getElementById('count-reported').textContent   = statusMap['REPORTED']    || 0;
-      document.getElementById('count-verified').textContent   = statusMap['VERIFIED']    || 0;
-      document.getElementById('count-inprogress').textContent = statusMap['IN_PROGRESS'] || 0;
-      document.getElementById('count-resolved').textContent   = statusMap['RESOLVED']    || 0;
+      const reported   = statusMap['REPORTED']    || 0;
+      const verified   = statusMap['VERIFIED']    || 0;
+      const inprogress = statusMap['IN_PROGRESS'] || 0;
+      const resolved   = statusMap['RESOLVED']    || 0;
+      const total      = reported + verified + inprogress + resolved;
 
-      // --- DOUGHNUT CHART (Status) ---
+      countUp(document.getElementById('count-reported'),   reported,   1200);
+      countUp(document.getElementById('count-verified'),   verified,   1200);
+      countUp(document.getElementById('count-inprogress'), inprogress, 1200);
+      countUp(document.getElementById('count-resolved'),   resolved,   1200);
+      countUp(document.getElementById('doughnut-total'),   total,      1400);
+
+      /* ── DOUGHNUT CHART dengan animasi putar ── */
       const statusLabels = data.status.map(s => s.status);
       const statusCounts = data.status.map(s => s.count);
-      new Chart(document.getElementById('statusChart'), {
+      const doughnutColors = {
+        'REPORTED':    '#6b7280',
+        'VERIFIED':    '#3b82f6',
+        'IN_PROGRESS': '#f59e0b',
+        'RESOLVED':    '#10b981',
+      };
+      const dColors = data.status.map(s => doughnutColors[s.status] || '#ccc');
+
+      const statusChart = new Chart(document.getElementById('statusChart'), {
         type: 'doughnut',
         data: {
           labels: statusLabels,
           datasets: [{
             data: statusCounts,
-            backgroundColor: ['#6c757d', '#0d6efd', '#ffc107', '#198754'],
+            backgroundColor: dColors,
+            borderColor: '#fff',
+            borderWidth: 3,
+            hoverBorderWidth: 4,
+            hoverOffset: 8,
           }]
         },
         options: {
-          responsive: true,
-          plugins: { legend: { position: 'bottom' } }
+          responsive: false,
+          cutout: '68%',
+          rotation: 0,
+          animation: {
+            animateRotate: true,
+            animateScale: false,
+            duration: 1600,
+            easing: 'easeInOutQuart',
+          },
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: {
+                font: { family: 'DM Sans', size: 11 },
+                padding: 14,
+                boxWidth: 10,
+                boxHeight: 10,
+                usePointStyle: true,
+                pointStyle: 'circle',
+              }
+            },
+            tooltip: {
+              callbacks: {
+                label: ctx => ` ${ctx.label}: ${ctx.raw} laporan`
+              },
+              bodyFont: { family: 'DM Sans' },
+              titleFont: { family: 'Syne', weight: '700' },
+            }
+          }
         }
       });
 
-      // --- BAR CHART (Kategori) ---
+      /* ── Rotasi doughnut terus-menerus ── */
+      let rotation = 0;
+      let isPaused = false;
+
+      function rotateDoughnut() {
+        if (!isPaused) {
+          rotation += 0.3;
+          statusChart.options.rotation = rotation;
+          statusChart.update('none'); /* 'none' = skip animasi, langsung render */
+        }
+        requestAnimationFrame(rotateDoughnut);
+      }
+
+      /* Pause saat hover supaya bisa baca tooltip */
+      document.getElementById('statusChart').addEventListener('mouseenter', () => isPaused = true);
+      document.getElementById('statusChart').addEventListener('mouseleave', () => isPaused = false);
+
+      /* Mulai rotasi setelah animasi masuk selesai */
+      setTimeout(rotateDoughnut, 1700);
+
+      /* ── BAR CHART dengan animasi slide dari bawah ── */
       const catLabels = data.category.map(c => c.category);
       const catCounts = data.category.map(c => c.count);
+      const barColors = ['#3b82f6','#10b981','#f59e0b','#e74c3c','#8b5cf6','#06b6d4','#f97316'];
+
       new Chart(document.getElementById('categoryChart'), {
         type: 'bar',
         data: {
@@ -143,38 +597,83 @@ document.addEventListener('DOMContentLoaded', function () {
           datasets: [{
             label: 'Jumlah Laporan',
             data: catCounts,
-            backgroundColor: ['#0d6efd','#198754','#ffc107','#dc3545','#6f42c1'],
+            backgroundColor: barColors.slice(0, catLabels.length),
+            borderRadius: 8,
+            borderSkipped: false,
+            hoverBackgroundColor: barColors.slice(0, catLabels.length).map(c => c + 'cc'),
           }]
         },
         options: {
           responsive: true,
-          plugins: { legend: { display: false } },
-          scales: { y: { beginAtZero: true } }
+          animation: {
+            duration: 1400,
+            easing: 'easeInOutQuart',
+            delay: (ctx) => ctx.dataIndex * 120,
+          },
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              callbacks: {
+                label: ctx => ` ${ctx.raw} laporan`
+              },
+              bodyFont: { family: 'DM Sans' },
+              titleFont: { family: 'Syne', weight: '700' },
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              grid: { color: 'rgba(0,0,0,0.05)' },
+              ticks: {
+                font: { family: 'DM Sans', size: 11 },
+                color: '#8a9ab0',
+              }
+            },
+            x: {
+              grid: { display: false },
+              ticks: {
+                font: { family: 'DM Sans', size: 11 },
+                color: '#5a6a7a',
+              }
+            }
+          }
         }
       });
 
-      // --- TABEL REPORTED ---
+      /* ── TABEL REPORTED ── */
       const tbReported = document.getElementById('table-reported');
-      data.latest_reported.forEach(r => {
-        tbReported.innerHTML += `
-          <tr>
-            <td>${r.title}</td>
-            <td>${r.category}</td>
-            <td>${r.created_at}</td>
-          </tr>`;
-      });
+      tbReported.innerHTML = '';
+      if (data.latest_reported.length === 0) {
+        tbReported.innerHTML = '<tr><td colspan="3" style="text-align:center;color:#8a9ab0;font-family:\'DM Sans\',sans-serif;font-size:0.82rem;padding:1.2rem;">Belum ada data</td></tr>';
+      } else {
+        data.latest_reported.forEach(r => {
+          tbReported.innerHTML += `
+            <tr>
+              <td title="${r.title}">${r.title}</td>
+              <td><span class="db-cat-badge">${r.category}</span></td>
+              <td>${r.created_at}</td>
+            </tr>`;
+        });
+      }
 
-      // --- TABEL RESOLVED ---
+      /* ── TABEL RESOLVED ── */
       const tbResolved = document.getElementById('table-resolved');
-      data.latest_resolved.forEach(r => {
-        tbResolved.innerHTML += `
-          <tr>
-            <td>${r.title}</td>
-            <td>${r.category}</td>
-            <td>${r.created_at}</td>
-          </tr>`;
-      });
-    });
+      tbResolved.innerHTML = '';
+      if (data.latest_resolved.length === 0) {
+        tbResolved.innerHTML = '<tr><td colspan="3" style="text-align:center;color:#8a9ab0;font-family:\'DM Sans\',sans-serif;font-size:0.82rem;padding:1.2rem;">Belum ada data</td></tr>';
+      } else {
+        data.latest_resolved.forEach(r => {
+          tbResolved.innerHTML += `
+            <tr>
+              <td title="${r.title}">${r.title}</td>
+              <td><span class="db-cat-badge" style="background:#d1fae5;color:#065f46;">${r.category}</span></td>
+              <td>${r.created_at}</td>
+            </tr>`;
+        });
+      }
+
+    })
+    .catch(err => console.error('[Dashboard] Fetch error:', err));
 
 });
 </script>

@@ -4,134 +4,540 @@
 
 {% block content %}
 
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@300;400;500&display=swap');
+
+:root {
+  --city-blue: #1a3a6b;
+  --city-accent: #f5a623;
+  --text-primary: #0d1b2a;
+  --text-muted: #5a6a7a;
+}
+
+/* ── HERO ── */
+.ab-hero {
+  background: linear-gradient(135deg, #0d1f3c 0%, #1a3a6b 60%, #0a2a5c 100%);
+  border-radius: 20px;
+  padding: 2.5rem 3rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+  margin-bottom: 1.8rem;
+  overflow: hidden;
+  position: relative;
+  min-height: 200px;
+}
+.ab-hero::before {
+  content: '';
+  position: absolute; inset: 0;
+  background-image: radial-gradient(circle, rgba(255,255,255,0.5) 1px, transparent 1px);
+  background-size: 40px 40px;
+  opacity: 0.1;
+}
+.ab-hero-left { position: relative; z-index: 1; color: #fff; }
+.ab-hero-tag {
+  display: inline-block;
+  background: rgba(245,166,35,0.15);
+  border: 1px solid rgba(245,166,35,0.45);
+  color: var(--city-accent);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.68rem; font-weight: 500;
+  letter-spacing: 0.15em; text-transform: uppercase;
+  padding: 4px 12px; border-radius: 100px; margin-bottom: 10px;
+}
+.ab-hero-title {
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(1.6rem, 3vw, 2.4rem);
+  font-weight: 800; line-height: 1.15; margin-bottom: 6px;
+}
+.ab-hero-title span {
+  background: linear-gradient(90deg, #f5a623, #ffdb70);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.ab-hero-sub {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.92rem; font-weight: 300;
+  color: rgba(255,255,255,0.68);
+}
+
+/* Ilustrasi hero animasi */
+@keyframes ab-float  { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-7px)} }
+@keyframes ab-spin   { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
+@keyframes ab-pulse  { 0%,100%{opacity:0.6;r:8} 50%{opacity:1;r:11} }
+@keyframes ab-blink  { 0%,80%,100%{opacity:0.2} 40%{opacity:1} }
+
+.ab-illo-city   { animation: ab-float 3.5s ease-in-out infinite; transform-origin: 100px 80px; }
+.ab-illo-signal { animation: ab-spin  4s linear infinite; transform-origin: 155px 30px; }
+.ab-illo-dot1   { animation: ab-blink 1.8s ease-in-out infinite 0s; }
+.ab-illo-dot2   { animation: ab-blink 1.8s ease-in-out infinite 0.4s; }
+.ab-illo-dot3   { animation: ab-blink 1.8s ease-in-out infinite 0.8s; }
+
+/* ── SECTION TITLE ── */
+.ab-section {
+  font-family: 'Syne', sans-serif;
+  font-size: 1.1rem; font-weight: 700;
+  color: var(--text-primary); margin-bottom: 1rem;
+  display: flex; align-items: center; gap: 8px;
+}
+.ab-section::after {
+  content: ''; flex: 1; height: 1px;
+  background: linear-gradient(90deg, #e2e8f0, transparent);
+}
+
+/* ── CARDS ── */
+.ab-card {
+  background: #fff;
+  border: 1px solid #e8eef6;
+  border-radius: 18px;
+  padding: 1.6rem;
+  height: 100%;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.04);
+  transition: box-shadow 0.2s, transform 0.2s;
+}
+.ab-card:hover {
+  box-shadow: 0 8px 28px rgba(0,0,0,0.08);
+  transform: translateY(-2px);
+}
+.ab-card-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 1rem; font-weight: 700;
+  color: var(--text-primary); margin-bottom: 1rem;
+  display: flex; align-items: center; gap: 8px;
+}
+.ab-card-text {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.88rem; color: #3a4a5a;
+  line-height: 1.7;
+}
+
+/* ── TUJUAN LIST ── */
+.ab-goal-item {
+  display: flex; align-items: flex-start; gap: 10px;
+  padding: 10px 0;
+  border-bottom: 1px solid #f0f4f9;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.88rem; color: var(--text-primary);
+}
+.ab-goal-item:last-child { border-bottom: none; }
+.ab-goal-check {
+  width: 20px; height: 20px; border-radius: 50%;
+  background: #d1fae5; color: #065f46;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.65rem; font-weight: 700; flex-shrink: 0;
+  margin-top: 1px;
+}
+
+/* ── KATEGORI ── */
+.ab-cat-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 12px;
+  margin-bottom: 1.8rem;
+}
+.ab-cat-item {
+  background: #fff;
+  border: 1px solid #e8eef6;
+  border-radius: 14px;
+  padding: 1.2rem 0.8rem;
+  text-align: center;
+  transition: all 0.2s;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+}
+.ab-cat-item:hover {
+  border-color: var(--city-blue);
+  box-shadow: 0 6px 20px rgba(26,58,107,0.12);
+  transform: translateY(-3px);
+}
+.ab-cat-icon { font-size: 1.8rem; margin-bottom: 6px; }
+.ab-cat-label {
+  font-family: 'Syne', sans-serif;
+  font-size: 0.75rem; font-weight: 700;
+  color: var(--text-primary);
+}
+
+/* ── ALUR STATUS ── */
+.ab-flow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding: 1.4rem;
+  background: #fff;
+  border: 1px solid #e8eef6;
+  border-radius: 18px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.04);
+  margin-bottom: 1.8rem;
+}
+.ab-flow-step {
+  padding: 14px 20px;
+  border-radius: 14px;
+  text-align: center;
+  min-width: 120px;
+  transition: transform 0.2s;
+}
+.ab-flow-step:hover { transform: translateY(-2px); }
+.ab-flow-label {
+  font-family: 'Syne', sans-serif;
+  font-size: 0.8rem; font-weight: 700; margin-bottom: 2px;
+}
+.ab-flow-sub {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.72rem; opacity: 0.85;
+}
+.ab-flow-arrow {
+  font-size: 1.2rem; color: #c0cfe0; flex-shrink: 0;
+}
+.step-reported  { background: #f1f5f9; color: #334155; border: 1px solid #e2e8f0; }
+.step-verified  { background: #dbeafe; color: #1e40af; border: 1px solid #bfdbfe; }
+.step-progress  { background: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
+.step-resolved  { background: #d1fae5; color: #065f46; border: 1px solid #a7f3d0; }
+
+/* ── DEVELOPER CARD ── */
+.ab-dev-card {
+  background: #fff;
+  border: 1px solid #e8eef6;
+  border-radius: 18px;
+  padding: 1.6rem;
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.04);
+  transition: box-shadow 0.2s;
+}
+.ab-dev-card:hover { box-shadow: 0 8px 28px rgba(0,0,0,0.08); }
+.ab-dev-avatar {
+  width: 72px; height: 72px; border-radius: 50%;
+  background: linear-gradient(135deg, #1a3a6b, #3b82f6);
+  color: #fff;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Syne', sans-serif;
+  font-size: 1.8rem; font-weight: 800;
+  flex-shrink: 0;
+  box-shadow: 0 4px 16px rgba(26,58,107,0.25);
+}
+.ab-dev-name {
+  font-family: 'Syne', sans-serif;
+  font-size: 1.1rem; font-weight: 700;
+  color: var(--text-primary); margin-bottom: 4px;
+}
+.ab-dev-meta {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.82rem; color: var(--text-muted);
+  line-height: 1.6;
+}
+.ab-npm-badge {
+  display: inline-block;
+  background: #eff6ff; color: #1e40af;
+  border: 1px solid #bfdbfe;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.72rem; font-weight: 500;
+  padding: 3px 10px; border-radius: 100px;
+  margin-bottom: 6px;
+}
+
+@media (max-width: 768px) {
+  .ab-cat-grid { grid-template-columns: repeat(3, 1fr); }
+  .ab-hero { flex-direction: column; padding: 1.5rem; }
+  .ab-dev-card { flex-direction: column; text-align: center; }
+  .ab-flow { gap: 4px; }
+  .ab-flow-step { min-width: 90px; padding: 10px 12px; }
+}
+</style>
+
+<!-- Breadcrumb -->
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb" style="font-family:'DM Sans',sans-serif; font-size:0.82rem;">
+    <li class="breadcrumb-item"><a href="/" style="color:var(--city-blue);">🏠 Home</a></li>
+    <li class="breadcrumb-item active">About</li>
+  </ol>
+</nav>
+
 <!-- HERO -->
-<div class="text-white text-center p-5 rounded mb-4"
-     style="background: linear-gradient(135deg, #0d6efd, #0dcaf0);">
-    <h1 class="fw-bold">🏙 Smart City Lampung</h1>
-    <p class="lead mb-0">Platform pelaporan masalah kota yang transparan dan terstruktur</p>
+<div class="ab-hero">
+  <div class="ab-hero-left">
+    <div class="ab-hero-tag">ℹ️ Tentang Kami</div>
+    <h1 class="ab-hero-title">🏙 Smart City <span>Lampung</span></h1>
+    <p class="ab-hero-sub">Platform pelaporan masalah kota yang transparan dan terstruktur</p>
+  </div>
+  <!-- Ilustrasi animasi -->
+  <div style="position:relative;z-index:1;flex-shrink:0;">
+    <svg width="200" height="140" viewBox="0 0 200 140" xmlns="http://www.w3.org/2000/svg">
+      <!-- Kota mengambang -->
+      <g class="ab-illo-city">
+        <!-- Gedung kiri kecil -->
+        <rect x="18" y="70" width="28" height="60" rx="4" fill="rgba(255,255,255,0.1)" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
+        <rect x="22" y="76" width="6" height="6" rx="1" fill="#f5a623" opacity="0.7"/>
+        <rect x="32" y="76" width="6" height="6" rx="1" fill="#f5a623" opacity="0.4"/>
+        <rect x="22" y="86" width="6" height="6" rx="1" fill="#f5a623" opacity="0.6"/>
+        <rect x="32" y="86" width="6" height="6" rx="1" fill="#f5a623" opacity="0.8"/>
+        <!-- Gedung tengah tinggi -->
+        <rect x="52" y="40" width="36" height="90" rx="4" fill="rgba(255,255,255,0.12)" stroke="rgba(255,255,255,0.25)" stroke-width="1"/>
+        <rect x="56" y="48" width="7" height="7" rx="1" fill="#00c6ff" opacity="0.6"/>
+        <rect x="67" y="48" width="7" height="7" rx="1" fill="#00c6ff" opacity="0.9"/>
+        <rect x="56" y="60" width="7" height="7" rx="1" fill="#00c6ff" opacity="0.4"/>
+        <rect x="67" y="60" width="7" height="7" rx="1" fill="#00c6ff" opacity="0.7"/>
+        <rect x="56" y="72" width="7" height="7" rx="1" fill="#00c6ff" opacity="0.8"/>
+        <rect x="67" y="72" width="7" height="7" rx="1" fill="#00c6ff" opacity="0.5"/>
+        <!-- Gedung kanan -->
+        <rect x="96" y="55" width="30" height="75" rx="4" fill="rgba(255,255,255,0.1)" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
+        <rect x="100" y="62" width="6" height="6" rx="1" fill="#f5a623" opacity="0.8"/>
+        <rect x="110" y="62" width="6" height="6" rx="1" fill="#f5a623" opacity="0.5"/>
+        <rect x="100" y="72" width="6" height="6" rx="1" fill="#f5a623" opacity="0.6"/>
+        <rect x="110" y="72" width="6" height="6" rx="1" fill="#f5a623" opacity="0.9"/>
+        <!-- Jalan -->
+        <rect x="10" y="128" width="126" height="10" rx="2" fill="rgba(0,0,0,0.3)"/>
+        <rect x="60" y="131" width="16" height="2" rx="1" fill="rgba(245,166,35,0.6)"/>
+      </g>
+      <!-- Sinyal wifi berputar -->
+      <g class="ab-illo-signal">
+        <path d="M148 38 Q155 28 162 38" stroke="rgba(255,255,255,0.5)" stroke-width="2" fill="none" stroke-linecap="round"/>
+        <path d="M144 34 Q155 20 166 34" stroke="rgba(255,255,255,0.3)" stroke-width="2" fill="none" stroke-linecap="round"/>
+        <circle cx="155" cy="42" r="3" fill="#f5a623"/>
+      </g>
+      <!-- Titik koneksi berdenyut -->
+      <circle class="ab-illo-dot1" cx="170" cy="60" r="5" fill="#10b981"/>
+      <circle class="ab-illo-dot2" cx="180" cy="80" r="4" fill="#3b82f6"/>
+      <circle class="ab-illo-dot3" cx="165" cy="95" r="5" fill="#f5a623"/>
+      <!-- Garis koneksi -->
+      <line x1="170" y1="60" x2="180" y2="80" stroke="rgba(255,255,255,0.15)" stroke-width="1" stroke-dasharray="3 3"/>
+      <line x1="180" y1="80" x2="165" y2="95" stroke="rgba(255,255,255,0.15)" stroke-width="1" stroke-dasharray="3 3"/>
+    </svg>
+  </div>
 </div>
 
-<!-- TENTANG APLIKASI -->
-<div class="row g-4 mb-4">
-    <div class="col-md-6">
-        <div class="card shadow-sm h-100">
-            <div class="card-body">
-                <h5 class="card-title fw-bold">📌 Tentang Aplikasi</h5>
-                <p class="card-text">
-                    Smart City Lampung adalah aplikasi berbasis web yang dirancang untuk membantu
-                    warga melaporkan berbagai permasalahan di lingkungan kota, seperti jalan rusak,
-                    lampu jalan mati, sampah menumpuk, banjir lokal, atau fasilitas umum bermasalah.
-                </p>
-                <p class="card-text">
-                    Setiap laporan akan ditindaklanjuti oleh pihak pengelola kota secara terstruktur
-                    dan transparan sehingga warga dapat memantau perkembangan penanganan masalah
-                    secara real-time.
-                </p>
-            </div>
-        </div>
+<!-- TENTANG + TUJUAN -->
+<div class="row g-3 mb-4">
+  <div class="col-md-6">
+    <div class="ab-card">
+      <div class="ab-card-title">📌 Tentang Aplikasi</div>
+      <p class="ab-card-text">
+        Smart City Lampung adalah aplikasi berbasis web yang dirancang untuk membantu
+        warga melaporkan berbagai permasalahan di lingkungan kota, seperti jalan rusak,
+        lampu jalan mati, sampah menumpuk, banjir lokal, atau fasilitas umum bermasalah.
+      </p>
+      <p class="ab-card-text mb-0">
+        Setiap laporan akan ditindaklanjuti oleh pihak pengelola kota secara terstruktur
+        dan transparan sehingga warga dapat memantau perkembangan penanganan masalah
+        secara real-time.
+      </p>
     </div>
-    <div class="col-md-6">
-        <div class="card shadow-sm h-100">
-            <div class="card-body">
-                <h5 class="card-title fw-bold">🎯 Tujuan</h5>
-                <ul class="list-group list-group-flush">
-                    <li class="list-group-item">✅ Mempermudah warga melaporkan masalah kota</li>
-                    <li class="list-group-item">✅ Meningkatkan transparansi penanganan laporan</li>
-                    <li class="list-group-item">✅ Mempercepat respons pemerintah daerah</li>
-                    <li class="list-group-item">✅ Mendokumentasikan permasalahan kota secara terstruktur</li>
-                    <li class="list-group-item">✅ Membangun komunikasi antara warga dan pemerintah</li>
-                </ul>
-            </div>
-        </div>
+  </div>
+  <div class="col-md-6">
+    <div class="ab-card">
+      <div class="ab-card-title">🎯 Tujuan</div>
+      <div class="ab-goal-item">
+        <div class="ab-goal-check">✓</div>
+        Mempermudah warga melaporkan masalah kota
+      </div>
+      <div class="ab-goal-item">
+        <div class="ab-goal-check">✓</div>
+        Meningkatkan transparansi penanganan laporan
+      </div>
+      <div class="ab-goal-item">
+        <div class="ab-goal-check">✓</div>
+        Mempercepat respons pemerintah daerah
+      </div>
+      <div class="ab-goal-item">
+        <div class="ab-goal-check">✓</div>
+        Mendokumentasikan permasalahan kota secara terstruktur
+      </div>
+      <div class="ab-goal-item">
+        <div class="ab-goal-check">✓</div>
+        Membangun komunikasi antara warga dan pemerintah
+      </div>
     </div>
+  </div>
 </div>
 
 <!-- KATEGORI LAPORAN -->
-<div class="card shadow-sm mb-4">
-    <div class="card-header fw-bold">📋 Kategori Laporan yang Didukung</div>
-    <div class="card-body">
-        <div class="row g-3 text-center">
-            <div class="col-6 col-md-4 col-lg-2">
-                <div class="p-3 bg-light rounded">
-                    <div class="fs-2">🛣</div>
-                    <div class="small fw-semibold">Jalan Rusak</div>
-                </div>
-            </div>
-            <div class="col-6 col-md-4 col-lg-2">
-                <div class="p-3 bg-light rounded">
-                    <div class="fs-2">🗑</div>
-                    <div class="small fw-semibold">Sampah</div>
-                </div>
-            </div>
-            <div class="col-6 col-md-4 col-lg-2">
-                <div class="p-3 bg-light rounded">
-                    <div class="fs-2">💡</div>
-                    <div class="small fw-semibold">Lampu Mati</div>
-                </div>
-            </div>
-            <div class="col-6 col-md-4 col-lg-2">
-                <div class="p-3 bg-light rounded">
-                    <div class="fs-2">🌊</div>
-                    <div class="small fw-semibold">Drainase</div>
-                </div>
-            </div>
-            <div class="col-6 col-md-4 col-lg-2">
-                <div class="p-3 bg-light rounded">
-                    <div class="fs-2">🔒</div>
-                    <div class="small fw-semibold">Keamanan</div>
-                </div>
-            </div>
-        </div>
-    </div>
+<style>
+/* Animasi kategori */
+@keyframes cat-shake   { 0%,100%{transform:translateX(0)} 20%{transform:translateX(-3px)} 40%{transform:translateX(3px)} 60%{transform:translateX(-2px)} 80%{transform:translateX(2px)} }
+@keyframes cat-bounce  { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-5px)} }
+@keyframes cat-glow    { 0%,100%{opacity:0.5;r:6} 50%{opacity:1;r:9} }
+@keyframes cat-flicker { 0%,90%,100%{opacity:1} 92%,96%{opacity:0.1} 94%,98%{opacity:0.8} }
+@keyframes cat-wave    { 0%{transform:translateX(0)} 100%{transform:translateX(-20px)} }
+@keyframes cat-drop    { 0%,100%{transform:translateY(0)} 50%{transform:translateY(6px)} }
+@keyframes cat-spin    { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
+@keyframes cat-pulse   { 0%,100%{transform:scale(1)} 50%{transform:scale(1.15)} }
+
+.ab-cat-item:hover .cat-svg { transform: scale(1.08); }
+.cat-svg { transition: transform 0.2s; display: block; margin: 0 auto; }
+
+/* Jalan: lubang goyang */
+.cat-hole    { animation: cat-shake 2s ease-in-out infinite; transform-origin: 30px 42px; }
+/* Sampah: tutup melenting */
+.cat-lid     { animation: cat-bounce 1.5s ease-in-out infinite; transform-origin: 30px 12px; }
+/* Lampu: nyala berkedip */
+.cat-bulb    { animation: cat-flicker 4s ease-in-out infinite; }
+.cat-glow-c  { animation: cat-glow 1.5s ease-in-out infinite; }
+/* Drainase: air mengalir */
+.cat-water   { animation: cat-wave 1.2s linear infinite; }
+/* Keamanan: gembok berdenyut */
+.cat-lock    { animation: cat-pulse 2s ease-in-out infinite; transform-origin: 30px 35px; }
+</style>
+
+<div class="ab-section">📋 Kategori Laporan yang Didukung</div>
+<div class="ab-cat-grid mb-4">
+
+  <!-- Jalan Rusak -->
+  <div class="ab-cat-item">
+    <svg class="cat-svg" width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg">
+      <!-- Jalan -->
+      <rect x="5" y="38" width="50" height="16" rx="3" fill="#94a3b8"/>
+      <!-- Garis tengah jalan -->
+      <rect x="12" y="44" width="10" height="3" rx="1.5" fill="#f5a623" opacity="0.8"/>
+      <rect x="28" y="44" width="10" height="3" rx="1.5" fill="#f5a623" opacity="0.8"/>
+      <rect x="44" y="44" width="6"  height="3" rx="1.5" fill="#f5a623" opacity="0.5"/>
+      <!-- Lubang / retakan -->
+      <g class="cat-hole">
+        <ellipse cx="30" cy="39" rx="10" ry="5" fill="#1e293b"/>
+        <ellipse cx="30" cy="38" rx="7"  ry="3" fill="#0f172a"/>
+        <!-- Retakan -->
+        <line x1="22" y1="36" x2="18" y2="32" stroke="#64748b" stroke-width="1.5" stroke-linecap="round"/>
+        <line x1="38" y1="36" x2="43" y2="31" stroke="#64748b" stroke-width="1.5" stroke-linecap="round"/>
+        <line x1="30" y1="34" x2="28" y2="28" stroke="#64748b" stroke-width="1.5" stroke-linecap="round"/>
+      </g>
+      <!-- Tanda seru -->
+      <circle cx="48" cy="14" r="9" fill="#ef4444"/>
+      <text x="48" y="18" text-anchor="middle" font-size="11" font-weight="bold" fill="white" font-family="sans-serif">!</text>
+    </svg>
+    <div class="ab-cat-label">Jalan Rusak</div>
+  </div>
+
+  <!-- Sampah -->
+  <div class="ab-cat-item">
+    <svg class="cat-svg" width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg">
+      <!-- Badan tempat sampah -->
+      <rect x="12" y="20" width="36" height="34" rx="4" fill="#64748b"/>
+      <rect x="14" y="22" width="32" height="30" rx="3" fill="#475569"/>
+      <!-- Garis dekorasi -->
+      <line x1="22" y1="28" x2="22" y2="46" stroke="rgba(255,255,255,0.2)" stroke-width="2" stroke-linecap="round"/>
+      <line x1="30" y1="28" x2="30" y2="46" stroke="rgba(255,255,255,0.2)" stroke-width="2" stroke-linecap="round"/>
+      <line x1="38" y1="28" x2="38" y2="46" stroke="rgba(255,255,255,0.2)" stroke-width="2" stroke-linecap="round"/>
+      <!-- Tutup melenting -->
+      <g class="cat-lid">
+        <rect x="9"  y="14" width="42" height="8" rx="3" fill="#94a3b8"/>
+        <rect x="24" y="8"  width="12" height="8" rx="3" fill="#94a3b8"/>
+        <!-- Sampah meluber -->
+        <path d="M18 14 Q22 6 28 10 Q32 4 36 10 Q40 5 44 13" fill="#22c55e" opacity="0.8" stroke="none"/>
+      </g>
+    </svg>
+    <div class="ab-cat-label">Sampah</div>
+  </div>
+
+  <!-- Lampu Mati -->
+  <div class="ab-cat-item">
+    <svg class="cat-svg" width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg">
+      <!-- Tiang -->
+      <rect x="28" y="34" width="4" height="22" rx="2" fill="#64748b"/>
+      <!-- Kepala lampu -->
+      <path d="M18 18 Q18 8 30 8 Q42 8 42 18 Q42 28 30 32 Q18 28 18 18Z" fill="#fbbf24" class="cat-bulb"/>
+      <!-- Kilap lampu -->
+      <ellipse cx="26" cy="14" rx="4" ry="6" fill="rgba(255,255,255,0.3)" class="cat-bulb"/>
+      <!-- Sorot cahaya -->
+      <circle class="cat-glow-c" cx="30" cy="20" r="6" fill="#fef08a" opacity="0.4"/>
+      <!-- Ulir lampu -->
+      <rect x="25" y="30" width="10" height="5" rx="2" fill="#94a3b8"/>
+      <!-- Sinar keluar -->
+      <line x1="12" y1="12" x2="8"  y2="8"  stroke="#fbbf24" stroke-width="2" stroke-linecap="round" class="cat-bulb" opacity="0.7"/>
+      <line x1="48" y1="12" x2="52" y2="8"  stroke="#fbbf24" stroke-width="2" stroke-linecap="round" class="cat-bulb" opacity="0.7"/>
+      <line x1="30" y1="6"  x2="30" y2="2"  stroke="#fbbf24" stroke-width="2" stroke-linecap="round" class="cat-bulb" opacity="0.7"/>
+      <line x1="14" y1="22" x2="9"  y2="22" stroke="#fbbf24" stroke-width="2" stroke-linecap="round" class="cat-bulb" opacity="0.5"/>
+      <line x1="46" y1="22" x2="51" y2="22" stroke="#fbbf24" stroke-width="2" stroke-linecap="round" class="cat-bulb" opacity="0.5"/>
+    </svg>
+    <div class="ab-cat-label">Lampu Mati</div>
+  </div>
+
+  <!-- Drainase -->
+  <div class="ab-cat-item">
+    <svg class="cat-svg" width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg">
+      <!-- Saluran -->
+      <rect x="5" y="35" width="50" height="18" rx="4" fill="#3b82f6" opacity="0.3"/>
+      <rect x="5" y="35" width="50" height="18" rx="4" fill="none" stroke="#3b82f6" stroke-width="2"/>
+      <!-- Jeruji saluran -->
+      <line x1="15" y1="35" x2="15" y2="53" stroke="#1d4ed8" stroke-width="2"/>
+      <line x1="25" y1="35" x2="25" y2="53" stroke="#1d4ed8" stroke-width="2"/>
+      <line x1="35" y1="35" x2="35" y2="53" stroke="#1d4ed8" stroke-width="2"/>
+      <line x1="45" y1="35" x2="45" y2="53" stroke="#1d4ed8" stroke-width="2"/>
+      <!-- Air mengalir (clip) -->
+      <clipPath id="water-clip">
+        <rect x="6" y="36" width="48" height="16" rx="3"/>
+      </clipPath>
+      <g clip-path="url(#water-clip)">
+        <g class="cat-water">
+          <path d="M0 44 Q10 40 20 44 Q30 48 40 44 Q50 40 60 44 Q70 48 80 44" fill="none" stroke="#60a5fa" stroke-width="3" opacity="0.8"/>
+          <path d="M0 49 Q10 45 20 49 Q30 53 40 49 Q50 45 60 49 Q70 53 80 49" fill="none" stroke="#93c5fd" stroke-width="2" opacity="0.6"/>
+        </g>
+      </g>
+      <!-- Tanda mampet -->
+      <circle cx="30" cy="22" r="11" fill="#ef4444" opacity="0.9"/>
+      <line x1="25" y1="17" x2="35" y2="27" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+      <line x1="35" y1="17" x2="25" y2="27" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+    </svg>
+    <div class="ab-cat-label">Drainase</div>
+  </div>
+
+  <!-- Keamanan -->
+  <div class="ab-cat-item">
+    <svg class="cat-svg" width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg">
+      <g class="cat-lock">
+        <!-- Perisai -->
+        <path d="M30 5 L50 13 L50 32 Q50 46 30 55 Q10 46 10 32 L10 13 Z" fill="#1a3a6b" opacity="0.9"/>
+        <path d="M30 10 L45 16 L45 32 Q45 43 30 50 Q15 43 15 32 L15 16 Z" fill="#2d5f9e" opacity="0.8"/>
+        <!-- Gembok dalam perisai -->
+        <rect x="22" y="32" width="16" height="12" rx="3" fill="rgba(255,255,255,0.85)"/>
+        <path d="M24 32 Q24 24 30 24 Q36 24 36 32" stroke="rgba(255,255,255,0.85)" stroke-width="3" fill="none" stroke-linecap="round"/>
+        <!-- Lubang kunci -->
+        <circle cx="30" cy="37" r="2.5" fill="#1a3a6b"/>
+        <rect x="29" y="37" width="2" height="4" rx="1" fill="#1a3a6b"/>
+      </g>
+    </svg>
+    <div class="ab-cat-label">Keamanan</div>
+  </div>
+
 </div>
 
 <!-- ALUR STATUS -->
-<div class="card shadow-sm mb-4">
-    <div class="card-header fw-bold">🔄 Alur Penanganan Laporan</div>
-    <div class="card-body">
-        <div class="d-flex flex-wrap justify-content-center align-items-center gap-2 text-center">
-            <div class="p-3 bg-secondary text-white rounded">
-                <div class="fw-bold">📢 REPORTED</div>
-                <small>Laporan masuk</small>
-            </div>
-            <div class="fs-4">→</div>
-            <div class="p-3 bg-primary text-white rounded">
-                <div class="fw-bold">✔ VERIFIED</div>
-                <small>Diverifikasi admin</small>
-            </div>
-            <div class="fs-4">→</div>
-            <div class="p-3 bg-warning text-dark rounded">
-                <div class="fw-bold">⏳ IN PROGRESS</div>
-                <small>Sedang ditangani</small>
-            </div>
-            <div class="fs-4">→</div>
-            <div class="p-3 bg-success text-white rounded">
-                <div class="fw-bold">✅ RESOLVED</div>
-                <small>Selesai ditangani</small>
-            </div>
-        </div>
-    </div>
+<div class="ab-section">🔄 Alur Penanganan Laporan</div>
+<div class="ab-flow mb-4">
+  <div class="ab-flow-step step-reported">
+    <div class="ab-flow-label">📢 REPORTED</div>
+    <div class="ab-flow-sub">Laporan masuk</div>
+  </div>
+  <div class="ab-flow-arrow">→</div>
+  <div class="ab-flow-step step-verified">
+    <div class="ab-flow-label">✔ VERIFIED</div>
+    <div class="ab-flow-sub">Diverifikasi admin</div>
+  </div>
+  <div class="ab-flow-arrow">→</div>
+  <div class="ab-flow-step step-progress">
+    <div class="ab-flow-label">⏳ IN PROGRESS</div>
+    <div class="ab-flow-sub">Sedang ditangani</div>
+  </div>
+  <div class="ab-flow-arrow">→</div>
+  <div class="ab-flow-step step-resolved">
+    <div class="ab-flow-label">✅ RESOLVED</div>
+    <div class="ab-flow-sub">Selesai ditangani</div>
+  </div>
 </div>
 
-<!-- DEVELOPER INFO -->
-<div class="card shadow-sm mb-4">
-    <div class="card-header fw-bold">👨‍💻 Developer</div>
-    <div class="card-body">
-        <div class="row align-items-center">
-            <div class="col-md-2 text-center mb-3 mb-md-0">
-                <div class="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center"
-                     style="width:80px; height:80px; font-size:2rem;">
-                    A
-                </div>
-            </div>
-            <div class="col-md-10">
-                <h5 class="fw-bold mb-1">Arfal Malik Gibran</h5>
-                <p class="text-muted mb-1">NPM: 24782005</p>
-                <p class="text-muted mb-1">Teknologi Rekayasa Internet — Politeknik Negeri Lampung</p>
-                <p class="text-muted mb-0">Mata Kuliah: Pemrograman Internet 1 (PIE 1416)</p>
-            </div>
-        </div>
+<!-- DEVELOPER -->
+<div class="ab-section">👨‍💻 Developer</div>
+<div class="ab-dev-card">
+  <div class="ab-dev-avatar">A</div>
+  <div>
+    <div class="ab-npm-badge">NPM: 24782005</div>
+    <div class="ab-dev-name">Arfal Malik Gibran</div>
+    <div class="ab-dev-meta">
+      Teknologi Rekayasa Internet — Politeknik Negeri Lampung<br>
+      Mata Kuliah: Pemrograman Internet 1 (PIE 1416)
     </div>
+  </div>
 </div>
 
 {% endblock %}

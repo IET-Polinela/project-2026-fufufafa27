@@ -3,47 +3,265 @@
 {% block title %}Login — Smart City{% endblock %}
 
 {% block content %}
-<div class="row justify-content-center mt-5">
-  <div class="col-md-5">
-    <div class="card shadow">
-      <div class="card-header bg-primary text-white text-center">
-        <h4 class="mb-0">🔐 Login</h4>
+<style>
+  /* GAYA PEMAKSA (override container dari base.html) */
+  /* Paksa semua elemen pembungkus dari base.html menjadi full width tanpa padding */
+  html, body {
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+    overflow-x: hidden !important;
+  }
+  /* Jika base.html punya .container, main, .wrapper, atau apapun, kita paksa */
+  .container, .container-fluid, main, .main, .wrapper, .content-wrapper, [class*="container"] {
+    max-width: 100% !important;
+    width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    overflow-x: hidden !important;
+  }
+  /* Pastikan semua induk dari .auth-wrap tidak punya margin/padding */
+  body > *:first-child, body > main, body > div:first-child {
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+  }
+
+  /* FONTS */
+  @import url('https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@300;400;500&display=swap');
+
+  :root {
+    --city-blue: #1a3a6b;
+    --city-accent: #f5a623;
+    --text-primary: #ffffff;
+    --text-muted: rgba(255,255,255,0.75);
+  }
+
+  /* WRAPPER FULL LAYAR */
+  .auth-wrap {
+    min-height: 100vh !important;
+    width: 100% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    background: url('https://images.pexels.com/photos/466685/pexels-photo-466685.jpeg?auto=compress&cs=tinysrgb&w=1600') no-repeat center center/cover !important;
+    position: relative !important;
+    left: 0 !important;
+    right: 0 !important;
+  }
+
+  .auth-wrap::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 0;
+  }
+
+  .auth-box {
+    width: 100%;
+    max-width: 440px;
+    position: relative;
+    z-index: 1;
+    margin: 1rem;
+  }
+
+  /* CARD transparan */
+  .auth-card {
+    background: rgba(15, 25, 45, 0.55);
+    backdrop-filter: blur(12px);
+    border-radius: 28px;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    overflow: hidden;
+  }
+
+  /* HEADER */
+  .auth-header {
+    background: linear-gradient(135deg, rgba(13, 31, 60, 0.85) 0%, rgba(26, 58, 107, 0.85) 60%, rgba(10, 42, 92, 0.85) 100%);
+    padding: 2rem 2rem 1.8rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    border-bottom: 1px solid rgba(255,255,255,0.15);
+  }
+  .auth-header::before {
+    content: '';
+    position: absolute; inset: 0;
+    background-image: radial-gradient(circle, rgba(255,255,255,0.3) 1px, transparent 1px);
+    background-size: 30px 30px;
+    opacity: 0.15;
+  }
+
+  /* Animasi */
+  @keyframes auth-float  { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-5px)} }
+  @keyframes auth-shine  { 0%,100%{opacity:0.3} 50%{opacity:0.7} }
+  @keyframes auth-ring   { 0%{r:18;opacity:0.6} 100%{r:30;opacity:0} }
+
+  .auth-illo { animation: auth-float 3s ease-in-out infinite; }
+  .auth-shine { animation: auth-shine 2s ease-in-out infinite; }
+  .auth-ring  { animation: auth-ring  1.8s ease-out infinite; }
+
+  .auth-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.5rem; font-weight: 800;
+    color: #fff; margin-bottom: 4px;
+    position: relative; z-index: 1;
+  }
+  .auth-title span {
+    background: linear-gradient(90deg, #f5a623, #ffdb70);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .auth-sub {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.82rem; font-weight: 300;
+    color: rgba(255,255,255,0.8);
+    position: relative; z-index: 1;
+  }
+
+  /* BODY */
+  .auth-body { 
+    padding: 1.8rem 2rem 2rem; 
+    background: transparent;
+  }
+
+  /* Alert */
+  .auth-alert {
+    display: flex; align-items: flex-start; gap: 8px;
+    background: rgba(254, 242, 242, 0.2);
+    backdrop-filter: blur(4px);
+    color: #ffc4c4;
+    border: 1px solid rgba(254, 202, 202, 0.5);
+    border-radius: 10px;
+    padding: 10px 14px; margin-bottom: 1.2rem;
+    font-family: 'DM Sans', sans-serif; font-size: 0.84rem;
+  }
+
+  /* Form */
+  .auth-form-group { margin-bottom: 1.1rem; }
+  .auth-label {
+    display: block;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.74rem; font-weight: 500;
+    color: rgba(255,255,255,0.7);
+    text-transform: uppercase; letter-spacing: 0.07em;
+    margin-bottom: 6px;
+  }
+  .auth-input {
+    width: 100%;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.92rem;
+    color: #0d1b2a;
+    border: 1.5px solid rgba(255,255,255,0.4);
+    border-radius: 12px;
+    padding: 11px 14px;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    background: rgba(255, 255, 255, 0.85);
+  }
+  .auth-input:focus {
+    border-color: #f5a623;
+    box-shadow: 0 0 0 3px rgba(245,166,35,0.2);
+    background: #fff;
+  }
+
+  /* Tombol */
+  .auth-btn {
+    width: 100%; margin-top: 0.5rem;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.92rem; font-weight: 500;
+    padding: 12px;
+    border-radius: 100px; border: none;
+    background: linear-gradient(135deg, #f5a623, #ffc857);
+    color: #0d1b2a;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+  }
+  .auth-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+    background: linear-gradient(135deg, #ffb347, #ffd966);
+  }
+
+  /* Footer */
+  .auth-footer {
+    text-align: center; margin-top: 1.4rem;
+    padding-top: 1.2rem;
+    border-top: 1px solid rgba(255,255,255,0.2);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.84rem;
+    color: rgba(255,255,255,0.8);
+  }
+  .auth-footer a {
+    color: #ffdb70; font-weight: 500; text-decoration: none;
+  }
+  .auth-footer a:hover { text-decoration: underline; }
+</style>
+
+<div class="auth-wrap">
+  <div class="auth-box">
+    <div class="auth-card">
+
+      <div class="auth-header">
+        <svg width="80" height="70" viewBox="0 0 80 70" xmlns="http://www.w3.org/2000/svg"
+             style="display:block;margin:0 auto 1rem;position:relative;z-index:1;">
+          <g class="auth-illo">
+            <circle class="auth-ring" cx="40" cy="28" r="18" fill="none" stroke="rgba(245,166,35,0.5)" stroke-width="2"/>
+            <rect x="22" y="34" width="36" height="28" rx="7" fill="rgba(255,255,255,0.15)" stroke="rgba(255,255,255,0.4)" stroke-width="1.5"/>
+            <circle cx="40" cy="46" r="5" fill="rgba(255,255,255,0.5)"/>
+            <rect x="38" y="46" width="4" height="8" rx="2" fill="rgba(255,255,255,0.5)"/>
+            <path d="M28 34 Q28 14 40 14 Q52 14 52 34" stroke="rgba(255,255,255,0.6)" stroke-width="4" fill="none" stroke-linecap="round"/>
+            <rect class="auth-shine" x="25" y="37" width="6" height="10" rx="3" fill="rgba(255,255,255,0.4)"/>
+          </g>
+        </svg>
+        <div class="auth-title">Selamat <span>Datang</span></div>
+        <div class="auth-sub">Masuk ke akun Smart City kamu</div>
       </div>
-      <div class="card-body p-4">
+
+      <div class="auth-body">
 
         {% if messages %}
           {% for message in messages %}
-            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-              {{ message }}
-              <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            <div class="auth-alert">
+              ⚠️ {{ message }}
             </div>
           {% endfor %}
         {% endif %}
 
         <form method="post">
           {% csrf_token %}
-          <div class="mb-3">
-            <label for="id_username" class="form-label fw-semibold">Username</label>
+
+          <div class="auth-form-group">
+            <label for="id_username" class="auth-label">Username</label>
             <input type="text" name="username" id="id_username"
-                   class="form-control" placeholder="Masukkan username" required autofocus>
+                   class="auth-input" placeholder="Masukkan username" required autofocus>
           </div>
-          <div class="mb-3">
-            <label for="id_password" class="form-label fw-semibold">Password</label>
+
+          <div class="auth-form-group">
+            <label for="id_password" class="auth-label">Password</label>
             <input type="password" name="password" id="id_password"
-                   class="form-control" placeholder="Masukkan password" required>
+                   class="auth-input" placeholder="Masukkan password" required>
           </div>
-          <div class="d-grid">
-            <button type="submit" class="btn btn-primary">Login</button>
-          </div>
+
+          <button type="submit" class="auth-btn">🔐 Login</button>
         </form>
 
-        <hr>
-        <p class="text-center mb-0 small">
+        <div class="auth-footer">
           Belum punya akun?
           <a href="{% url 'register' %}">Daftar sebagai Citizen</a>
-        </p>
+        </div>
+
       </div>
     </div>
   </div>
 </div>
+
 {% endblock %}

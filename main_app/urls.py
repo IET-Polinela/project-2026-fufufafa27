@@ -14,5 +14,5 @@ urlpatterns = [
 
     # ✅ TAMBAHAN LAB 7 - Live Search & Detail API
     path('api/search/', ReportSearchView.as_view(), name='report_search'),
-    path('api/report/<int:pk>/', ReportDetailApiView.as_view(), name='report_detail_api'),
+    path('api/detail/<int:pk>/', ReportDetailApiView.as_view(), name='report_detail_api'),  # ✅ ganti dari api/report/ ke api/detail/
 ]
