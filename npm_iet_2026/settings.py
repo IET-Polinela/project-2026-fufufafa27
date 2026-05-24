@@ -37,12 +37,13 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'rest_framework',               # ✅ TAMBAHAN LAB 9
+    'rest_framework',                    # ✅ TAMBAHAN LAB 9
+    'rest_framework_simplejwt',          # ✅ TAMBAHAN LAB 10
     'main_app',
-    'usermanagement_24782005',      # ✅ TAMBAHAN LAB 6
-    'dashboard_24782005',           # ✅ TAMBAHAN LAB 7
-    'about',                        # ✅ TAMBAHAN
-    'contacts',                     # ✅ TAMBAHAN
+    'usermanagement_24782005',           # ✅ TAMBAHAN LAB 6
+    'dashboard_24782005',                # ✅ TAMBAHAN LAB 7
+    'about',                             # ✅ TAMBAHAN
+    'contacts',                          # ✅ TAMBAHAN
 ]
 
 MIDDLEWARE = [
@@ -132,3 +133,14 @@ AUTH_USER_MODEL = 'usermanagement_24782005.User'
 LOGIN_URL = '/auth/login/'
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/auth/login/'
+
+# ✅ TAMBAHAN LAB 10 - JWT Authentication
+REST_FRAMEWORK = {
+    'DEFAULT_RENDERER_CLASSES': [
+        'rest_framework.renderers.JSONRenderer',
+        'rest_framework.renderers.BrowsableAPIRenderer'
+    ],
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    )
+}
