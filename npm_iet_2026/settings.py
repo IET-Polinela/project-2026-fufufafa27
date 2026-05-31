@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',                    # ✅ TAMBAHAN LAB 9
     'rest_framework_simplejwt',          # ✅ TAMBAHAN LAB 10
+    'corsheaders',                       # ✅ TAMBAHAN LAB 11
     'main_app',
     'usermanagement_24782005',           # ✅ TAMBAHAN LAB 6
     'dashboard_24782005',                # ✅ TAMBAHAN LAB 7
@@ -47,6 +48,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',                        # ✅ TAMBAHAN LAB 11 — wajib paling atas
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -144,3 +146,6 @@ REST_FRAMEWORK = {
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     )
 }
+
+# ✅ TAMBAHAN LAB 11 - CORS Settings
+CORS_ALLOW_ALL_ORIGINS = True  # Mengizinkan semua domain untuk mengakses API (testing lokal)
