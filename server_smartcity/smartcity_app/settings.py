@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-e)@w3y#2141a1ro9c88wf0ms09mew4e88ha_x^8ppd+niq%_^-
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']                    # ✅ TAMBAHAN LAB 13
 
 
 # Application definition
@@ -58,7 +58,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'npm_iet_2026.urls'
+ROOT_URLCONF = 'smartcity_app.urls'      # ✅ UBAH LAB 13
 
 TEMPLATES = [
     {
@@ -75,7 +75,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'npm_iet_2026.wsgi.application'
+WSGI_APPLICATION = 'smartcity_app.wsgi.application'  # ✅ UBAH LAB 13
 
 
 # Database
@@ -128,6 +128,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = 'static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'  # ✅ TAMBAHAN LAB 13
 
 # ✅ TAMBAHAN LAB 6 - Custom User Model & Auth Redirects
 AUTH_USER_MODEL = 'usermanagement_24782005.User'

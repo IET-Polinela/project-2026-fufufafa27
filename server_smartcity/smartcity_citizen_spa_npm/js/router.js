@@ -71,15 +71,39 @@ const routes = {
                             </div>
                         </div>
                     </div>
+
+                    <!-- ✅ TAMBAHAN LAB 12 — Rekap Stats -->
+                    <div class="px-3 py-2">
+                        <div class="small text-muted fw-bold mb-2" style="font-size:0.7rem;text-transform:uppercase;letter-spacing:1px;">Rekap Laporan Saya</div>
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <span class="small text-white"><i class="bi bi-file-earmark-text me-1"></i>Total</span>
+                            <span class="badge bg-secondary" id="statTotal">-</span>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <span class="small text-white"><i class="bi bi-pencil me-1"></i>Draft</span>
+                            <span class="badge bg-secondary" id="statDraft">-</span>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <span class="small text-white"><i class="bi bi-gear me-1"></i>Diproses</span>
+                            <span class="badge bg-warning text-dark" id="statProcess">-</span>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="small text-white"><i class="bi bi-check-circle me-1"></i>Selesai</span>
+                            <span class="badge bg-success" id="statDone">-</span>
+                        </div>
+                    </div>
+
+                    <hr class="border-secondary mx-3">
+
                     <div class="sidebar-heading">Menu Utama</div>
                     <nav class="nav flex-column">
                         <a href="#dashboard" class="nav-link active"><i class="bi bi-speedometer2 me-2"></i>Dashboard</a>
-                        <a href="#laporan" class="nav-link"><i class="bi bi-file-earmark-text me-2"></i>Laporan Saya</a>
-                        <a href="#buat-laporan" class="nav-link"><i class="bi bi-plus-circle me-2"></i>Buat Laporan</a>
+                        <a href="#" class="nav-link" onclick="openNewReportModal(); return false;">
+                            <i class="bi bi-plus-circle me-2"></i>Buat Laporan
+                        </a>
                     </nav>
                     <div class="sidebar-heading mt-2">Lainnya</div>
                     <nav class="nav flex-column">
-                        <a href="#profil" class="nav-link"><i class="bi bi-person-circle me-2"></i>Profil Saya</a>
                         <a href="#" class="nav-link text-danger" onclick="logout(); return false;">
                             <i class="bi bi-box-arrow-left me-2"></i>Keluar
                         </a>
@@ -89,62 +113,40 @@ const routes = {
 
             <!-- Kolom Tengah: Konten Utama (50%) -->
             <section class="col-12 col-lg-6 p-3 p-lg-4">
-                <div class="d-flex align-items-center justify-content-between mb-4">
+                <div class="d-flex align-items-center justify-content-between mb-3">
                     <div>
-                        <h5 class="fw-bold mb-0"><i class="bi bi-hand-wave text-warning me-2"></i>Selamat Datang!</h5>
+                        <h5 class="fw-bold mb-0"><i class="bi bi-speedometer2 text-primary me-2"></i>Dashboard</h5>
                         <p class="text-muted small mb-0">Portal Warga Smart City Lampung</p>
                     </div>
+                    <button onclick="openNewReportModal()" class="btn btn-primary btn-sm fw-bold">
+                        <i class="bi bi-plus-circle me-1"></i>Laporan Baru
+                    </button>
                 </div>
-                <div class="row g-3 mb-4">
-                    <div class="col-6">
-                        <div class="card stat-card text-center p-3">
-                            <div class="stat-icon bg-primary bg-opacity-10 text-primary mx-auto mb-2">
-                                <i class="bi bi-file-earmark-check"></i>
-                            </div>
-                            <div class="fw-bold fs-4">12</div>
-                            <div class="text-muted small">Total Laporan</div>
-                        </div>
-                    </div>
-                    <div class="col-6">
-                        <div class="card stat-card text-center p-3">
-                            <div class="stat-icon bg-success bg-opacity-10 text-success mx-auto mb-2">
-                                <i class="bi bi-check2-circle"></i>
-                            </div>
-                            <div class="fw-bold fs-4">5</div>
-                            <div class="text-muted small">Selesai</div>
-                        </div>
-                    </div>
-                    <div class="col-6">
-                        <div class="card stat-card text-center p-3">
-                            <div class="stat-icon bg-warning bg-opacity-10 text-warning mx-auto mb-2">
-                                <i class="bi bi-clock-history"></i>
-                            </div>
-                            <div class="fw-bold fs-4">4</div>
-                            <div class="text-muted small">Dalam Proses</div>
-                        </div>
-                    </div>
-                    <div class="col-6">
-                        <div class="card stat-card text-center p-3">
-                            <div class="stat-icon bg-danger bg-opacity-10 text-danger mx-auto mb-2">
-                                <i class="bi bi-exclamation-circle"></i>
-                            </div>
-                            <div class="fw-bold fs-4">3</div>
-                            <div class="text-muted small">Menunggu</div>
-                        </div>
+
+                <!-- ✅ TAMBAHAN LAB 12 — Tab -->
+                <ul class="nav nav-tabs mb-3">
+                    <li class="nav-item">
+                        <button class="nav-link tab-btn active" data-tab="my_reports" onclick="switchTab('my_reports')">
+                            <i class="bi bi-person-lines-fill me-1"></i>Laporan Saya
+                        </button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="nav-link tab-btn" data-tab="feed" onclick="switchTab('feed')">
+                            <i class="bi bi-globe me-1"></i>Feed Kota
+                        </button>
+                    </li>
+                </ul>
+
+                <!-- List Container -->
+                <div id="listContainer">
+                    <div class="text-center text-muted py-5">
+                        <div class="spinner-border text-primary" role="status"></div>
+                        <p class="mt-2 small">Memuat data...</p>
                     </div>
                 </div>
-                <div class="card border-0 shadow-sm mb-4 text-center">
-                    <div class="card-body py-4">
-                        <i class="bi bi-inbox fs-1 text-muted mb-2 d-block"></i>
-                        <h5 class="mt-2">Selamat Datang!</h5>
-                        <p class="text-muted small mb-0">Koneksi API untuk data laporan akan diimplementasikan pada Lab 12.</p>
-                    </div>
-                </div>
-                <div class="d-grid">
-                    <a href="#buat-laporan" class="btn btn-primary btn-lg fw-bold">
-                        <i class="bi bi-plus-circle-fill me-2"></i>Buat Laporan Baru
-                    </a>
-                </div>
+
+                <!-- Pagination -->
+                <div id="paginationContainer" class="mt-3"></div>
             </section>
 
             <!-- Kolom Kanan: Pengumuman (25%) -->
@@ -160,7 +162,7 @@ const routes = {
                                     <i class="bi bi-megaphone-fill text-warning mt-1"></i>
                                     <div>
                                         <div class="small fw-semibold">Pemeliharaan Sistem</div>
-                                        <div class="text-muted" style="font-size:0.75rem;">Jadwal maintenance Sabtu 00:00-02:00 WIB</div>
+                                        <div class="text-muted" style="font-size:0.75rem;">Sabtu 00:00–02:00 WIB</div>
                                     </div>
                                 </div>
                             </div>
@@ -169,7 +171,7 @@ const routes = {
                                     <i class="bi bi-patch-check-fill text-success mt-1"></i>
                                     <div>
                                         <div class="small fw-semibold">Fitur Baru</div>
-                                        <div class="text-muted" style="font-size:0.75rem;">Upload foto laporan kini tersedia</div>
+                                        <div class="text-muted" style="font-size:0.75rem;">Upload foto laporan tersedia</div>
                                     </div>
                                 </div>
                             </div>
@@ -178,7 +180,7 @@ const routes = {
                                     <i class="bi bi-calendar-event-fill text-primary mt-1"></i>
                                     <div>
                                         <div class="small fw-semibold">Agenda Kota</div>
-                                        <div class="text-muted" style="font-size:0.75rem;">Musrenbang Kelurahan, 15 Juni 2026</div>
+                                        <div class="text-muted" style="font-size:0.75rem;">Musrenbang, 15 Juni 2026</div>
                                     </div>
                                 </div>
                             </div>
@@ -218,21 +220,21 @@ const routes = {
                     </a>
                 </div>
                 <div class="col">
-                    <a href="#laporan" class="d-block py-2 text-muted text-decoration-none">
+                    <a href="#" class="d-block py-2 text-muted text-decoration-none" onclick="switchTab('my_reports'); return false;">
                         <i class="bi bi-file-earmark-text d-block fs-5"></i>
                         <span style="font-size:0.65rem;">Laporan</span>
                     </a>
                 </div>
                 <div class="col">
-                    <a href="#buat-laporan" class="d-block py-2 text-muted text-decoration-none">
+                    <a href="#" class="d-block py-2 text-muted text-decoration-none" onclick="openNewReportModal(); return false;">
                         <i class="bi bi-plus-circle d-block fs-5"></i>
                         <span style="font-size:0.65rem;">Buat</span>
                     </a>
                 </div>
                 <div class="col">
-                    <a href="#profil" class="d-block py-2 text-muted text-decoration-none">
-                        <i class="bi bi-person-circle d-block fs-5"></i>
-                        <span style="font-size:0.65rem;">Profil</span>
+                    <a href="#" class="d-block py-2 text-muted text-decoration-none" onclick="switchTab('feed'); return false;">
+                        <i class="bi bi-globe d-block fs-5"></i>
+                        <span style="font-size:0.65rem;">Feed</span>
                     </a>
                 </div>
             </div>
@@ -273,6 +275,8 @@ function handleRouting() {
         const usernameEl = document.getElementById('sidebarUsername');
         if (usernameEl) usernameEl.textContent = localStorage.getItem('username') || 'Warga';
         if (typeof updateNavbar === 'function') updateNavbar();
+        // ✅ TAMBAHAN LAB 12 — Load data dari API
+        if (typeof loadDashboardData === 'function') loadDashboardData('my_reports', 1);
     }
 
     window.scrollTo({ top: 0, behavior: 'smooth' });
