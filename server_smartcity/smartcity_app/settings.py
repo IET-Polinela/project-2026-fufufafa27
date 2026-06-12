@@ -84,9 +84,9 @@ WSGI_APPLICATION = 'smartcity_app.wsgi.application'  # ✅ UBAH LAB 13
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'smartcity_db',
-        'USER': 'postgres',
-        'PASSWORD': 'admin',
+        'NAME': 'db_mhs08',
+        'USER': 'user_mhs08',
+        'PASSWORD': 'mhs08',
         'HOST': 'localhost',
         'PORT': '5432',
     }
@@ -149,4 +149,11 @@ REST_FRAMEWORK = {
 }
 
 # ✅ TAMBAHAN LAB 11 - CORS Settings
-CORS_ALLOW_ALL_ORIGINS = True  # Mengizinkan semua domain untuk mengakses API (testing lokal)
+CORS_ALLOW_ALL_ORIGINS = True
+
+# ✅ TAMBAHAN LAB 13 - CSRF Trusted Origins
+CSRF_TRUSTED_ORIGINS = [
+    'https://iet-polinela.github.io',
+    'http://103.151.63.71:8008',
+    'http://127.0.0.1:5500',
+]
