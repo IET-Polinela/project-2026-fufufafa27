@@ -3,7 +3,7 @@
  * Arfal Malik Gibran | 24782005 | TRI 4 A
  */
 
-const BASE_URL = 'http://127.0.0.1:8000';
+const BASE_URL = 'http://103.151.63.71:8008';
 
 async function requestAPI(endpoint, method = 'GET', bodyData = null) {
     const headers = { 'Content-Type': 'application/json' };
