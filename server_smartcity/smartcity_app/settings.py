@@ -84,9 +84,9 @@ WSGI_APPLICATION = 'smartcity_app.wsgi.application'  # ✅ UBAH LAB 13
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'db_mhs08',
-        'USER': 'user_mhs08',
-        'PASSWORD': 'mhs08',
+        'NAME': 'smartcity_db',
+        'USER': 'postgres',
+        'PASSWORD': 'admin',
         'HOST': 'localhost',
         'PORT': '5432',
     }
