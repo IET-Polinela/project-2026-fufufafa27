@@ -20,6 +20,16 @@ class AdminRequiredMixin:
         return super().dispatch(request, *args, **kwargs)
 
 
+# ✅ TAMBAHAN LAB 13 - Mixin proteksi Login (Citizen & Admin)
+class LoginRequiredMixin:
+    """Hanya user yang login yang boleh akses."""
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            messages.error(request, "Kamu harus login terlebih dahulu.")
+            return redirect('login')
+        return super().dispatch(request, *args, **kwargs)
+
+
 # ======================
 # HOME (halaman utama)
 # ======================
@@ -44,6 +54,15 @@ class ReportListView(ListView):
     template_name = 'main_app/report_list.html'
     context_object_name = 'reports'
 
+    def get_queryset(self):
+        user = self.request.user
+        if user.is_authenticated and user.is_admin:
+            # Admin lihat semua laporan termasuk DRAFT
+            return Report.objects.all().order_by('-created_at')
+        else:
+            # Citizen hanya lihat laporan bukan DRAFT
+            return Report.objects.exclude(status='DRAFT').order_by('-created_at')
+
 
 # ======================
 # DETAIL
@@ -57,13 +76,15 @@ class ReportDetailView(DetailView):
 # ======================
 # CREATE
 # ======================
-class ReportCreateView(AdminRequiredMixin, CreateView):  # ✅ TAMBAHAN LAB 6
+class ReportCreateView(LoginRequiredMixin, CreateView):  # ✅ UBAH LAB 13 - Citizen bisa tambah laporan
     model = Report
     fields = ['title', 'category', 'description', 'location']
     template_name = 'main_app/report_form.html'
     success_url = reverse_lazy('report_list')
 
     def form_valid(self, form):
+        form.instance.reporter = self.request.user  # ✅ Set reporter ke user yang login
+        form.instance.status = 'REPORTED'           # ✅ Default status REPORTED
         messages.success(self.request, "Laporan berhasil ditambahkan")
         return super().form_valid(form)
 
