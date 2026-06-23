@@ -40,6 +40,8 @@ INSTALLED_APPS = [
     'rest_framework',                    # ✅ TAMBAHAN LAB 9
     'rest_framework_simplejwt',          # ✅ TAMBAHAN LAB 10
     'corsheaders',                       # ✅ TAMBAHAN LAB 11
+    'drf_spectacular',                   # ✅ TAMBAHAN LAB 14
+    'django_scalar',                     # ✅ TAMBAHAN LAB 14
     'main_app',
     'usermanagement_24782005',           # ✅ TAMBAHAN LAB 6
     'dashboard_24782005',                # ✅ TAMBAHAN LAB 7
@@ -138,7 +140,9 @@ LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/auth/login/'
 
 # ✅ TAMBAHAN LAB 10 - JWT Authentication
+# ✅ DIUPDATE LAB 14 - Tambah DEFAULT_SCHEMA_CLASS
 REST_FRAMEWORK = {
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',  # ✅ TAMBAHAN LAB 14
     'DEFAULT_RENDERER_CLASSES': [
         'rest_framework.renderers.JSONRenderer',
         'rest_framework.renderers.BrowsableAPIRenderer'
@@ -157,3 +161,11 @@ CSRF_TRUSTED_ORIGINS = [
     'http://103.151.63.71:8008',
     'http://127.0.0.1:5500',
 ]
+
+# ✅ TAMBAHAN LAB 14 - OpenAPI Documentation
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'Smart City Portal API',
+    'DESCRIPTION': 'Dokumentasi REST API resmi untuk Portal Pelaporan Laporan Warga',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+}
