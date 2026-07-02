@@ -3,13 +3,12 @@ from django.views import View
 from django.urls import reverse_lazy
 from django.shortcuts import get_object_or_404, redirect
 from django.contrib import messages
-from django.http import JsonResponse  # ✅ TAMBAHAN LAB 7
+from django.http import JsonResponse
 from .models import Report
 
 
-# ✅ TAMBAHAN LAB 6 - Mixin proteksi Admin
+# ✅ Mixin proteksi Admin
 class AdminRequiredMixin:
-    """Hanya Admin yang boleh akses. Dicek di dispatch() sebelum view dieksekusi."""
     def dispatch(self, request, *args, **kwargs):
         if not request.user.is_authenticated:
             messages.error(request, "Kamu harus login terlebih dahulu.")
@@ -20,9 +19,8 @@ class AdminRequiredMixin:
         return super().dispatch(request, *args, **kwargs)
 
 
-# ✅ TAMBAHAN LAB 13 - Mixin proteksi Login (Citizen & Admin)
+# ✅ Mixin proteksi Login
 class LoginRequiredMixin:
-    """Hanya user yang login yang boleh akses."""
     def dispatch(self, request, *args, **kwargs):
         if not request.user.is_authenticated:
             messages.error(request, "Kamu harus login terlebih dahulu.")
@@ -31,7 +29,7 @@ class LoginRequiredMixin:
 
 
 # ======================
-# HOME (halaman utama)
+# HOME
 # ======================
 class HomeView(ListView):
     model = Report
@@ -47,9 +45,9 @@ class HomeView(ListView):
 
 
 # ======================
-# READ (LIST)
+# READ (LIST) - ✅ UBAH: tambah AdminRequiredMixin
 # ======================
-class ReportListView(ListView):
+class ReportListView(AdminRequiredMixin, ListView):
     model = Report
     template_name = 'main_app/report_list.html'
     context_object_name = 'reports'
@@ -57,34 +55,32 @@ class ReportListView(ListView):
     def get_queryset(self):
         user = self.request.user
         if user.is_authenticated and user.is_admin:
-            # Admin lihat semua laporan termasuk DRAFT
             return Report.objects.all().order_by('-created_at')
         else:
-            # Citizen hanya lihat laporan bukan DRAFT
             return Report.objects.exclude(status='DRAFT').order_by('-created_at')
 
 
 # ======================
-# DETAIL
+# DETAIL - ✅ UBAH: tambah AdminRequiredMixin
 # ======================
-class ReportDetailView(DetailView):
+class ReportDetailView(AdminRequiredMixin, DetailView):
     model = Report
     template_name = 'main_app/report_detail.html'
     context_object_name = 'report'
 
 
 # ======================
-# CREATE
+# CREATE - ✅ UBAH: tambah AdminRequiredMixin
 # ======================
-class ReportCreateView(LoginRequiredMixin, CreateView):  # ✅ UBAH LAB 13 - Citizen bisa tambah laporan
+class ReportCreateView(AdminRequiredMixin, CreateView):
     model = Report
     fields = ['title', 'category', 'description', 'location']
     template_name = 'main_app/report_form.html'
     success_url = reverse_lazy('report_list')
 
     def form_valid(self, form):
-        form.instance.reporter = self.request.user  # ✅ Set reporter ke user yang login
-        form.instance.status = 'REPORTED'           # ✅ Default status REPORTED
+        form.instance.reporter = self.request.user
+        form.instance.status = 'REPORTED'
         messages.success(self.request, "Laporan berhasil ditambahkan")
         return super().form_valid(form)
 
@@ -92,7 +88,7 @@ class ReportCreateView(LoginRequiredMixin, CreateView):  # ✅ UBAH LAB 13 - Cit
 # ======================
 # UPDATE
 # ======================
-class ReportUpdateView(AdminRequiredMixin, UpdateView):  # ✅ TAMBAHAN LAB 6
+class ReportUpdateView(AdminRequiredMixin, UpdateView):
     model = Report
     fields = ['title', 'category', 'description', 'location']
     template_name = 'main_app/report_form.html'
@@ -106,7 +102,7 @@ class ReportUpdateView(AdminRequiredMixin, UpdateView):  # ✅ TAMBAHAN LAB 6
 # ======================
 # DELETE
 # ======================
-class ReportDeleteView(AdminRequiredMixin, DeleteView):  # ✅ TAMBAHAN LAB 6
+class ReportDeleteView(AdminRequiredMixin, DeleteView):
     model = Report
     template_name = 'main_app/report_confirm_delete.html'
     success_url = reverse_lazy('report_list')
@@ -120,24 +116,20 @@ class ReportDeleteView(AdminRequiredMixin, DeleteView):  # ✅ TAMBAHAN LAB 6
 # ======================
 # WORKFLOW STATUS
 # ======================
-class ReportUpdateStatusView(AdminRequiredMixin, View):  # ✅ TAMBAHAN LAB 6
+class ReportUpdateStatusView(AdminRequiredMixin, View):
     def post(self, request, pk):
         report = get_object_or_404(Report, pk=pk)
-
         new_status = request.POST.get('status')
-
         allowed_status = ['REPORTED', 'VERIFIED', 'IN_PROGRESS', 'RESOLVED']
         if new_status in allowed_status:
             report.status = new_status
             report.save()
-
             messages.success(request, "Status berhasil diperbarui")
-
         return redirect('report_list')
 
 
-# ✅ TAMBAHAN LAB 7 - Live Search
-class ReportSearchView(View):
+# ✅ Live Search - tambah AdminRequiredMixin
+class ReportSearchView(AdminRequiredMixin, View):
     def get(self, request):
         query = request.GET.get('q', '').strip()
         reports = Report.objects.all()
@@ -152,7 +144,7 @@ class ReportSearchView(View):
         return JsonResponse({'reports': data})
 
 
-# ✅ TAMBAHAN LAB 7 - Detail Modal API
+# ✅ Detail Modal API
 class ReportDetailApiView(View):
     def get(self, request, pk):
         try:
@@ -169,3 +161,18 @@ class ReportDetailApiView(View):
             return JsonResponse(data)
         except Report.DoesNotExist:
             return JsonResponse({'error': 'Laporan tidak ditemukan'}, status=404)
+
+
+# ✅ TAMBAHAN LAB 15 - fungsi untuk test_addtional.py
+def report_detail_api(request, pk):
+    report = get_object_or_404(Report, pk=pk)
+    data = {
+        'id': report.id,
+        'title': report.title,
+        'category': report.category,
+        'description': report.description,
+        'location': report.location,
+        'status': report.status,
+        'created_at': report.created_at.strftime('%d %b %Y %H:%M') if report.created_at else '-',
+    }
+    return JsonResponse(data)

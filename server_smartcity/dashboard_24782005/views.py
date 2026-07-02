@@ -3,18 +3,25 @@ from django.http import JsonResponse
 from django.views import View
 from django.db.models import Count
 from main_app.models import Report
+from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
 
 
-# ======================
-# HALAMAN UTAMA DASHBOARD
-# ======================
+# ✅ TAMBAHAN LAB 15 - proteksi dashboard
+@method_decorator(login_required, name='dispatch')
 class DashboardView(TemplateView):
     template_name = 'dashboard/dashboard.html'
 
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            from django.shortcuts import redirect
+            return redirect('login')
+        if not request.user.is_admin:
+            from django.http import HttpResponseForbidden
+            return HttpResponseForbidden()
+        return super().dispatch(request, *args, **kwargs)
 
-# ======================
-# API: DATA STATISTIK (untuk Chart.js)
-# ======================
+
 class DashboardStatsView(View):
     def get(self, request):
         status_data = (
@@ -50,5 +57,4 @@ class DashboardStatsView(View):
             'latest_reported': latest_reported,
             'latest_resolved': latest_resolved,
         }
-        print("[DashboardStats] Data dikirim:", data)
         return JsonResponse(data)

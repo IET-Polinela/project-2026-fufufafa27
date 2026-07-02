@@ -21,6 +21,15 @@ async function requestAPI(endpoint, method = 'GET', bodyData = null) {
 
     try {
         const response = await fetch(`${BASE_URL}${endpoint}`, config);
+
+        // ✅ TAMBAHAN LAB 15 — Interceptor 401
+        if (response.status === 401) {
+            alert('Sesi Anda telah habis atau Anda belum login.');
+            localStorage.clear();
+            window.location.hash = '#login';
+            return null;
+        }
+
         return response;
     } catch (error) {
         console.error('[API] Network error:', error);
